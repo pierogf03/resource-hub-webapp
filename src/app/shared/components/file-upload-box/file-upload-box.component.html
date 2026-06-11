@@ -1,0 +1,14 @@
+<div class="file-upload-box">
+  <mat-icon>upload_file</mat-icon>
+  <p>Arrastra o selecciona un archivo Excel (.xlsx)</p>
+  <input type="file" [accept]="accept" (change)="onFileChange($event)" #fileInput hidden />
+  <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
+    {{ label }}
+  </button>
+  @if (selectedFile) {
+    <p class="file-upload-box__name">{{ selectedFile.name }}</p>
+  }
+  @if (error) {
+    <p class="file-upload-box__error">{{ error }}</p>
+  }
+</div>

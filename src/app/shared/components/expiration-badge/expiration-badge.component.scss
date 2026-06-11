@@ -1,0 +1,15 @@
+.expiration-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &__days {
+    font-weight: 500;
+    opacity: 0.9;
+  }
+}

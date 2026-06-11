@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar proveedor' : 'Nuevo proveedor' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" placeholder="Ej. Proveedor Demo SAP" />
+      @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+      @if (form.controls.name.hasError('minlength') && form.controls.name.touched) {
+        <mat-error>Mínimo 2 caracteres</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>RUC</mat-label>
+      <input matInput formControlName="ruc" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Contacto</mat-label>
+      <input matInput formControlName="contact_name" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Email contacto</mat-label>
+      <input matInput type="email" formControlName="contact_email" />
+      @if (form.controls.contact_email.hasError('email') && form.controls.contact_email.touched) {
+        <mat-error>Email inválido</mat-error>
+      }
+    </mat-form-field>
+    @if (isEdit) {
+      <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="submit()">Guardar</button>
+</mat-dialog-actions>

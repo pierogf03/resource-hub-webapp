@@ -1,0 +1,13 @@
+.search-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+
+  &__field {
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+  }
+}

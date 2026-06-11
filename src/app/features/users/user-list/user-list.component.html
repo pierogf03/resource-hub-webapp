@@ -1,0 +1,53 @@
+<app-page-header
+  title="Usuarios"
+  subtitle="Administra los usuarios del sistema"
+  actionLabel="Nuevo usuario"
+  [showAction]="true"
+  (actionClick)="openForm()"
+></app-page-header>
+
+<app-search-filter-bar placeholder="Buscar por nombre o email..." (searchChange)="onSearch($event)"></app-search-filter-bar>
+
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (users.length === 0) {
+  <app-empty-state message="No hay usuarios registrados."></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="users">
+      <ng-container matColumnDef="full_name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let row">{{ row.full_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+      </ng-container>
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Rol</th>
+        <td mat-cell *matCellDef="let row">{{ getRoleLabel(row.role) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="is_active">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">{{ row.is_active ? 'Activo' : 'Inactivo' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="openForm(row)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [length]="total"
+    [pageSize]="pageSize"
+    [pageIndex]="page - 1"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="onPage($event)"
+  ></mat-paginator>
+}

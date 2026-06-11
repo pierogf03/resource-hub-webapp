@@ -1,0 +1,16 @@
+export const APP_COLORS = {
+  primaryPurple: '#5B21B6',
+  deepPurple: '#3B0764',
+  accentViolet: '#7C3AED',
+  softPurple: '#EDE9FE',
+  background: '#F8F7FC',
+  surface: '#FFFFFF',
+  textPrimary: '#1F2937',
+  textSecondary: '#6B7280',
+  border: '#E5E7EB',
+  successGreen: '#16A34A',
+  warningAmber: '#F59E0B',
+  dangerRed: '#DC2626',
+  infoBlue: '#2563EB',
+  neutralGray: '#6B7280',
+} as const;

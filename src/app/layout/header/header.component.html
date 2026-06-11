@@ -1,0 +1,37 @@
+<header class="header">
+  <div class="header__left">
+    <button
+      class="header__icon-btn header__menu-btn"
+      type="button"
+      (click)="menuToggle.emit()"
+      aria-label="Abrir menú"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+    <button
+      class="header__icon-btn header__collapse-btn"
+      type="button"
+      (click)="sidebarToggle.emit()"
+      [attr.aria-label]="sidebarExpanded ? 'Contraer sidebar' : 'Expandir sidebar'"
+    >
+      <mat-icon>{{ sidebarExpanded ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+    </button>
+  </div>
+
+  <div class="header__spacer"></div>
+
+  @if (user) {
+    <div class="header__actions">
+      <div class="header__user-chip">
+        <div class="header__avatar">{{ initials }}</div>
+        <div class="header__user-info">
+          <span class="header__name">{{ user.full_name }}</span>
+          <span class="header__role">{{ roleLabel }}</span>
+        </div>
+      </div>
+      <button class="header__icon-btn header__logout" type="button" (click)="logout()" aria-label="Cerrar sesión">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  }
+</header>

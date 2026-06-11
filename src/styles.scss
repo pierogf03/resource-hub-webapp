@@ -1,0 +1,90 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$violet-palette,
+      tertiary: mat.$magenta-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--shell-bg, #f0f1f6);
+  color: var(--shell-text, #1f2937);
+}
+
+// Shell design tokens (sidebar + layout)
+:root {
+  --shell-bg: #f0f1f6;
+  --shell-sidebar-bg: #16161f;
+  --shell-rail-bg: #111118;
+  --shell-sidebar-text: #e8e8ef;
+  --shell-rail-icon: #8b8b9e;
+  --shell-muted: #6b6b80;
+  --shell-border: rgba(255, 255, 255, 0.06);
+  --shell-accent: #4f6ef7;
+  --shell-header-bg: #ffffff;
+  --shell-header-border: #e8eaef;
+  --shell-surface-muted: #f4f5f8;
+  --shell-text: #1f2937;
+  --shell-card-bg: #ffffff;
+  --shell-card-border: #e8eaef;
+  --shell-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary {
+  --mdc-filled-button-container-color: #5b21b6;
+  --mdc-filled-button-label-text-color: #fff;
+}
+
+.mat-mdc-outlined-button.mat-primary {
+  --mdc-outlined-button-label-text-color: #5b21b6;
+  --mdc-outlined-button-outline-color: #5b21b6;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 300px;
+}
+
+.success-snackbar {
+  --mdc-snackbar-container-color: #16a34a;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #dc2626;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+.warning-snackbar {
+  --mdc-snackbar-container-color: #f59e0b;
+  --mdc-snackbar-supporting-text-color: #1f2937;
+}
+
+.info-snackbar {
+  --mdc-snackbar-container-color: #2563eb;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+.table-container {
+  overflow-x: auto;
+  background: var(--shell-card-bg, #fff);
+  border: 1px solid var(--shell-card-border, #e8eaef);
+  border-radius: 14px;
+  box-shadow: var(--shell-card-shadow);
+}

@@ -1,0 +1,52 @@
+<app-page-header
+  title="Historial de importaciones"
+  subtitle="Consulta las importaciones realizadas y sus resultados"
+></app-page-header>
+
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (batches.length === 0) {
+  <app-empty-state message="No hay importaciones registradas."></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="batches">
+      <ng-container matColumnDef="file_name">
+        <th mat-header-cell *matHeaderCellDef>Archivo</th>
+        <td mat-cell *matCellDef="let row">{{ row.file_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">{{ row.status }}</td>
+      </ng-container>
+      <ng-container matColumnDef="total_rows">
+        <th mat-header-cell *matHeaderCellDef>Total filas</th>
+        <td mat-cell *matCellDef="let row">{{ row.total_rows }}</td>
+      </ng-container>
+      <ng-container matColumnDef="successful_rows">
+        <th mat-header-cell *matHeaderCellDef>Exitosas</th>
+        <td mat-cell *matCellDef="let row">{{ row.successful_rows }}</td>
+      </ng-container>
+      <ng-container matColumnDef="failed_rows">
+        <th mat-header-cell *matHeaderCellDef>Fallidas</th>
+        <td mat-cell *matCellDef="let row">{{ row.failed_rows }}</td>
+      </ng-container>
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let row">{{ formatDate(row.created_at) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          @if (row.failed_rows > 0) {
+            <a mat-button [routerLink]="['/imports', row.id, 'errors']">
+              <mat-icon>error_outline</mat-icon>
+              Ver errores
+            </a>
+          }
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+}

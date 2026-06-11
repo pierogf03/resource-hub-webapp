@@ -1,0 +1,31 @@
+.file-upload-box {
+  border: 2px dashed #c4b5fd;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  background: #faf5ff;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #7c3aed;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0 0 1rem;
+    color: #6b7280;
+  }
+
+  &__name {
+    margin-top: 0.75rem !important;
+    color: #5b21b6 !important;
+    font-weight: 500;
+  }
+
+  &__error {
+    color: #dc2626 !important;
+    font-size: 0.875rem;
+  }
+}

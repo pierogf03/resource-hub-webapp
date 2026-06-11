@@ -1,0 +1,57 @@
+<app-page-header
+  title="Proveedores"
+  subtitle="Gestiona los proveedores configurables del sistema"
+  actionLabel="Nuevo proveedor"
+  [showAction]="true"
+  (actionClick)="openForm()"
+></app-page-header>
+
+<app-search-filter-bar placeholder="Buscar proveedor..." (searchChange)="onSearch($event)"></app-search-filter-bar>
+
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (providers.length === 0) {
+  <app-empty-state message="No hay proveedores registrados."></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="providers">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="ruc">
+        <th mat-header-cell *matHeaderCellDef>RUC</th>
+        <td mat-cell *matCellDef="let row">{{ row.ruc || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="contact_name">
+        <th mat-header-cell *matHeaderCellDef>Contacto</th>
+        <td mat-cell *matCellDef="let row">{{ row.contact_name || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="contact_email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let row">{{ row.contact_email || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="is_active">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">{{ row.is_active ? 'Activo' : 'Inactivo' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="openForm(row)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [length]="total"
+    [pageSize]="pageSize"
+    [pageIndex]="page - 1"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="onPage($event)"
+  ></mat-paginator>
+}

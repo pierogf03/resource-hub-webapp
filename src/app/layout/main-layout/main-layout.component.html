@@ -1,0 +1,40 @@
+<mat-sidenav-container class="main-layout">
+  <mat-sidenav
+    #drawer
+    class="main-layout__drawer"
+    mode="over"
+    [opened]="false"
+    [fixedInViewport]="true"
+  >
+    <app-sidebar
+      [expanded]="true"
+      [mobile]="true"
+      (navClick)="closeDrawerOnMobile()"
+    ></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content
+    class="main-layout__content-area"
+    [style.--sidebar-width.px]="sidebarWidth"
+  >
+    <div class="main-layout__shell">
+      <aside class="main-layout__sidebar main-layout__sidebar--desktop">
+        <app-sidebar
+          [expanded]="sidebarExpanded()"
+          (toggleExpanded)="toggleSidebar()"
+        ></app-sidebar>
+      </aside>
+
+      <div class="main-layout__main-column">
+        <app-header
+          [sidebarExpanded]="sidebarExpanded()"
+          (menuToggle)="openMobileDrawer()"
+          (sidebarToggle)="toggleSidebar()"
+        ></app-header>
+        <main class="main-layout__main">
+          <router-outlet></router-outlet>
+        </main>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

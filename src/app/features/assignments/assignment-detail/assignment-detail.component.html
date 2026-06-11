@@ -1,0 +1,38 @@
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (assignment) {
+  <app-page-header
+    [title]="assignment.consultant_name"
+    [subtitle]="assignment.technical_profile + ' · ' + assignment.provider_name"
+  ></app-page-header>
+
+  <div class="detail-actions">
+    <button mat-stroked-button [routerLink]="['/assignments', assignment.id, 'edit']">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+    <button mat-flat-button color="primary" (click)="generatePurchaseOrders()">
+      <mat-icon>receipt_long</mat-icon>
+      Generar OCs mensuales
+    </button>
+    <button mat-button routerLink="/assignments">Volver</button>
+  </div>
+
+  <mat-card class="detail-card">
+    <div class="detail-grid">
+      <div><span>Iniciativa principal</span><strong>{{ assignment.main_initiative_name }}</strong></div>
+      <div><span>Manager</span><strong>{{ assignment.manager_name }}</strong></div>
+      <div><span>Analista</span><strong>{{ assignment.analyst_responsible_name || '-' }}</strong></div>
+      <div><span>Inicio</span><strong>{{ formatDate(assignment.start_date) }}</strong></div>
+      <div><span>Fin</span><strong>{{ formatDate(assignment.end_date) }}</strong></div>
+      <div><span>Duración</span><strong>{{ assignment.duration_months }} meses</strong></div>
+      <div><span>Costo mensual USD</span><strong>{{ assignment.monthly_cost_usd | usdCurrency }}</strong></div>
+      <div><span>Costo total USD</span><strong>{{ assignment.total_cost_usd | usdCurrency }}</strong></div>
+      <div><span>Moneda</span><strong>{{ assignment.currency }}</strong></div>
+      <div><span>Días restantes</span><strong>{{ assignment.days_to_end | daysLeft }}</strong></div>
+      <div><span>Estado</span><app-status-chip [status]="assignment.status" type="assignment"></app-status-chip></div>
+      <div><span>Semáforo</span><app-expiration-badge [alert]="assignment.expiration_alert" [daysToEnd]="assignment.days_to_end"></app-expiration-badge></div>
+      <div><span>OCs generadas</span><strong>{{ assignment.purchase_orders_count }}</strong></div>
+    </div>
+  </mat-card>
+}
