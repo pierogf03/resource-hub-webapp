@@ -3,8 +3,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MonthPickerFieldComponent } from '../../../shared/components/month-picker-field/month-picker-field.component';
 import { PURCHASE_ORDER_STATUS_CONFIG, PurchaseOrderStatus } from '../../../core/constants/status.constants';
 import { Assignment } from '../../../core/models/assignment.model';
 import { PurchaseOrder } from '../../../core/models/purchase-order.model';
@@ -27,8 +29,11 @@ export interface PurchaseOrderFormData {
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
+    MonthPickerFieldComponent,
   ],
   templateUrl: './purchase-order-form.component.html',
+  styleUrl: './purchase-order-form.component.scss',
 })
 export class PurchaseOrderFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -42,6 +47,9 @@ export class PurchaseOrderFormComponent implements OnInit {
   loading = false;
   assignments: Assignment[] = [];
   statuses = Object.keys(PURCHASE_ORDER_STATUS_CONFIG) as PurchaseOrderStatus[];
+  statusLabels = Object.fromEntries(
+    Object.entries(PURCHASE_ORDER_STATUS_CONFIG).map(([key, config]) => [key, config.label])
+  ) as Record<PurchaseOrderStatus, string>;
 
   form = this.fb.nonNullable.group(
     {

@@ -8,6 +8,7 @@ import { Initiative } from '../../../core/models/initiative.model';
 import { User } from '../../../core/models/user.model';
 import { InitiativeService } from '../../../core/services/initiative.service';
 import { UserService } from '../../../core/services/user.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { SearchFilterBarComponent } from '../../../shared/components/search-filter-bar/search-filter-bar.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -35,6 +36,7 @@ import { InitiativeFormComponent } from '../initiative-form/initiative-form.comp
 export class InitiativeListComponent implements OnInit {
   private readonly initiativeService = inject(InitiativeService);
   private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
 
   loading = true;
@@ -47,15 +49,27 @@ export class InitiativeListComponent implements OnInit {
   displayedColumns = ['name', 'responsible_manager_id', 'budget_usd', 'is_active', 'actions'];
 
   ngOnInit(): void {
-    this.userService.getUsers({ page_size: 100 }).subscribe((res) => {
-      this.managers = res.data.items;
-    });
+    if (this.userService.canListUsers()) {
+      this.userService.getUsersForLookup().subscribe((users) => {
+        this.managers = users;
+      });
+    }
     this.loadInitiatives();
   }
 
   getManagerName(id: string | null | undefined): string {
-    if (!id) return '-';
-    return this.managers.find((m) => m.id === id)?.full_name ?? '-';
+    if (!id) {
+      return '-';
+    }
+    const fromList = this.managers.find((m) => m.id === id)?.full_name;
+    if (fromList) {
+      return fromList;
+    }
+    const current = this.authService.getCurrentUser();
+    if (current?.id === id) {
+      return current.full_name;
+    }
+    return '-';
   }
 
   loadInitiatives(): void {
@@ -88,7 +102,10 @@ export class InitiativeListComponent implements OnInit {
 
   openForm(initiative?: Initiative): void {
     const ref = this.dialog.open(InitiativeFormComponent, {
-      width: '500px',
+      width: '520px',
+      maxWidth: '95vw',
+      panelClass: 'app-dialog-panel',
+      autoFocus: false,
       data: { initiative },
     });
     ref.afterClosed().subscribe((saved) => {

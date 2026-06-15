@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
-import { forkJoin } from 'rxjs';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { DashboardSummary, ExpiringResource } from '../../../core/models/dashboard.model';
+import { PaginatedResponse } from '../../../core/models/api-response.model';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StatCardComponent } from '../../../shared/components/stat-card/stat-card.component';
 import { ExpirationBadgeComponent } from '../../../shared/components/expiration-badge/expiration-badge.component';
@@ -31,9 +31,11 @@ import { formatDate } from '../../../shared/utils/date-format.util';
 export class DashboardPageComponent implements OnInit {
   private readonly dashboardService = inject(DashboardService);
 
-  loading = true;
+  summaryLoading = true;
+  expiringLoading = false;
   summary: DashboardSummary | null = null;
   expiringResources: ExpiringResource[] = [];
+
   displayedColumns = [
     'consultant_name',
     'technical_profile',
@@ -46,18 +48,46 @@ export class DashboardPageComponent implements OnInit {
   formatDate = formatDate;
 
   ngOnInit(): void {
-    forkJoin({
-      summary: this.dashboardService.getSummary(),
-      expiring: this.dashboardService.getExpiringResources(),
-    }).subscribe({
-      next: ({ summary, expiring }) => {
-        this.summary = summary.data;
-        this.expiringResources = expiring.data ?? [];
-        this.loading = false;
+    this.dashboardService.getSummary().subscribe({
+      next: (response) => {
+        this.summary = response.data;
+        this.summaryLoading = false;
+        this.loadExpiringResources();
       },
       error: () => {
-        this.loading = false;
+        this.summaryLoading = false;
       },
     });
+  }
+
+  private loadExpiringResources(): void {
+    this.expiringLoading = true;
+    this.dashboardService.getExpiringResources().subscribe({
+      next: (response) => {
+        this.expiringResources = this.normalizeExpiringResources(response.data);
+        this.expiringLoading = false;
+      },
+      error: () => {
+        this.expiringResources = [];
+        this.expiringLoading = false;
+      },
+    });
+  }
+
+  private normalizeExpiringResources(data: unknown): ExpiringResource[] {
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    if (
+      data &&
+      typeof data === 'object' &&
+      'items' in data &&
+      Array.isArray((data as PaginatedResponse<ExpiringResource>).items)
+    ) {
+      return (data as PaginatedResponse<ExpiringResource>).items;
+    }
+
+    return [];
   }
 }

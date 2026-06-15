@@ -34,14 +34,16 @@
       }
     </mat-select>
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Periodo desde</mat-label>
-    <input matInput type="month" [formControl]="periodFrom" (change)="onFilterChange()" />
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Periodo hasta</mat-label>
-    <input matInput type="month" [formControl]="periodTo" (change)="onFilterChange()" />
-  </mat-form-field>
+  <app-month-picker-field
+    label="Periodo desde"
+    [formControl]="periodFrom"
+    (valueChange)="onFilterChange()"
+  ></app-month-picker-field>
+  <app-month-picker-field
+    label="Periodo hasta"
+    [formControl]="periodTo"
+    (valueChange)="onFilterChange()"
+  ></app-month-picker-field>
 </app-search-filter-bar>
 
 @if (loading) {

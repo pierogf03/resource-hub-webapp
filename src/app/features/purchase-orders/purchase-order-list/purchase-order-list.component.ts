@@ -1,8 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,6 +23,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { StatusChipComponent } from '../../../shared/components/status-chip/status-chip.component';
 import { UsdCurrencyPipe } from '../../../shared/pipes/usd-currency.pipe';
 import { MonthLabelPipe } from '../../../shared/pipes/month-label.pipe';
+import { MonthPickerFieldComponent } from '../../../shared/components/month-picker-field/month-picker-field.component';
 import { PurchaseOrderFormComponent } from '../purchase-order-form/purchase-order-form.component';
 
 @Component({
@@ -33,6 +36,7 @@ import { PurchaseOrderFormComponent } from '../purchase-order-form/purchase-orde
     MatIconModule,
     MatPaginatorModule,
     MatFormFieldModule,
+    MatInputModule,
     MatSelectModule,
     PageHeaderComponent,
     SearchFilterBarComponent,
@@ -41,6 +45,7 @@ import { PurchaseOrderFormComponent } from '../purchase-order-form/purchase-orde
     StatusChipComponent,
     UsdCurrencyPipe,
     MonthLabelPipe,
+    MonthPickerFieldComponent,
   ],
   templateUrl: './purchase-order-list.component.html',
   styleUrl: './purchase-order-list.component.scss',
@@ -50,6 +55,7 @@ export class PurchaseOrderListComponent implements OnInit {
   private readonly providerService = inject(ProviderService);
   private readonly assignmentService = inject(AssignmentService);
   private readonly dialog = inject(MatDialog);
+  private readonly route = inject(ActivatedRoute);
 
   loading = true;
   purchaseOrders: PurchaseOrder[] = [];
@@ -81,6 +87,11 @@ export class PurchaseOrderListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    const status = this.route.snapshot.queryParamMap.get('status');
+    if (status && this.statuses.includes(status as PurchaseOrderStatus)) {
+      this.statusFilter.setValue(status as PurchaseOrderStatus);
+    }
+
     this.providerService.getProviders({ page_size: 100 }).subscribe((r) => (this.providers = r.data.items));
     this.assignmentService.getAssignments({ page_size: 100 }).subscribe((r) => (this.assignments = r.data.items));
     this.loadPurchaseOrders();
@@ -130,7 +141,10 @@ export class PurchaseOrderListComponent implements OnInit {
 
   openForm(po?: PurchaseOrder): void {
     const ref = this.dialog.open(PurchaseOrderFormComponent, {
-      width: '550px',
+      width: '640px',
+      maxWidth: '95vw',
+      panelClass: 'app-dialog-panel',
+      autoFocus: false,
       data: { purchaseOrder: po },
     });
     ref.afterClosed().subscribe((saved) => {

@@ -1,0 +1,31 @@
+<div class="chat-input">
+  <div class="chat-input__composer">
+    <textarea
+      #textareaRef
+      class="chat-input__textarea"
+      [(ngModel)]="message"
+      [disabled]="disabled"
+      [maxlength]="maxLength"
+      placeholder="Pregúntale a Resource Hub Assistant..."
+      rows="1"
+      (keydown)="onKeydown($event)"
+      (input)="autoResize($event)"
+    ></textarea>
+    <button
+      mat-icon-button
+      type="button"
+      class="chat-input__send"
+      [disabled]="!canSend"
+      aria-label="Enviar mensaje"
+      (click)="submit()"
+    >
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+  <div class="chat-input__meta">
+    <span class="chat-input__hint">Enter envía · Shift+Enter nueva línea</span>
+    <span class="chat-input__counter" [class.chat-input__counter--over]="isOverLimit">
+      {{ charCount }}/{{ maxLength }}
+    </span>
+  </div>
+</div>

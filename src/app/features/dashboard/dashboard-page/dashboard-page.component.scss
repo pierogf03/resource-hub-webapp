@@ -23,11 +23,27 @@
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+  scroll-margin-top: 1rem;
 
   h2 {
-    margin: 0 0 1rem;
+    margin: 0;
     font-size: 1.125rem;
     color: #1f2937;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__hint {
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+    color: #6b7280;
   }
 
   &--grid {
@@ -55,9 +71,25 @@
 }
 
 .traffic-light {
+  display: block;
+  border: 2px solid transparent;
   border-radius: 12px;
   padding: 1.25rem;
   text-align: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--shell-accent, #2563eb);
+    outline-offset: 2px;
+  }
 
   &__count {
     display: block;
@@ -66,8 +98,19 @@
   }
 
   &__label {
+    display: block;
     font-size: 0.875rem;
     font-weight: 500;
+    margin-top: 0.25rem;
+  }
+
+  &__action {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: underline;
+    opacity: 0.85;
   }
 
   &--green {
@@ -84,10 +127,6 @@
     background: #fee2e2;
     color: #dc2626;
   }
-}
-
-.table-container {
-  overflow-x: auto;
 }
 
 .summary-card {
@@ -118,7 +157,7 @@
 .dashboard-link {
   display: inline-block;
   margin-top: 1rem;
-  color: #5b21b6;
+  color: var(--shell-accent, #2563eb);
   font-weight: 500;
   text-decoration: none;
 

@@ -82,6 +82,9 @@ export class UserListComponent implements OnInit {
   openForm(user?: User): void {
     const ref = this.dialog.open(UserFormComponent, {
       width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'app-dialog-panel',
+      autoFocus: false,
       data: { user },
     });
     ref.afterClosed().subscribe((saved) => {

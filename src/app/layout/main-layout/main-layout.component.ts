@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { ChatWidgetComponent } from '../../features/ai-chat/chat-widget/chat-widget.component';
+import { AuthService } from '../../core/services/auth.service';
 
 const SIDEBAR_EXPANDED_KEY = 'rp_sidebar_expanded';
 const SIDEBAR_WIDTH_EXPANDED = 260;
@@ -11,12 +13,14 @@ const SIDEBAR_WIDTH_COLLAPSED = 72;
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, MatSidenavModule, HeaderComponent, SidebarComponent],
+  imports: [RouterOutlet, MatSidenavModule, HeaderComponent, SidebarComponent, ChatWidgetComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
 })
 export class MainLayoutComponent implements OnInit {
   @ViewChild('drawer') drawer!: MatSidenav;
+
+  private readonly authService = inject(AuthService);
 
   sidebarExpanded = signal(true);
 
@@ -43,5 +47,9 @@ export class MainLayoutComponent implements OnInit {
 
   openMobileDrawer(): void {
     this.drawer?.open();
+  }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 }

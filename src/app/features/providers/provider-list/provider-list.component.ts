@@ -74,7 +74,10 @@ export class ProviderListComponent implements OnInit {
 
   openForm(provider?: Provider): void {
     const ref = this.dialog.open(ProviderFormComponent, {
-      width: '500px',
+      width: '520px',
+      maxWidth: '95vw',
+      panelClass: 'app-dialog-panel',
+      autoFocus: false,
       data: { provider },
     });
     ref.afterClosed().subscribe((saved) => {

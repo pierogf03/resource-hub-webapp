@@ -1,0 +1,39 @@
+<div class="chat-pending-action">
+  <div class="chat-pending-action__header">
+    <mat-icon>warning_amber</mat-icon>
+    <span>Confirmación requerida</span>
+  </div>
+
+  <p class="chat-pending-action__summary">{{ pendingAction.summary }}</p>
+
+  <div class="chat-pending-action__meta">
+    <span class="chat-pending-action__type">{{ pendingAction.action_type }}</span>
+  </div>
+
+  @if (payloadSummary) {
+    <details class="chat-pending-action__details">
+      <summary>Ver detalle de la acción</summary>
+      <pre class="chat-pending-action__payload">{{ payloadSummary }}</pre>
+    </details>
+  }
+
+  <div class="chat-pending-action__actions">
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="disabled"
+      (click)="cancel.emit()"
+    >
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="disabled"
+      (click)="confirm.emit()"
+    >
+      Confirmar
+    </button>
+  </div>
+</div>

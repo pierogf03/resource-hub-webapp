@@ -12,6 +12,7 @@ import { HistoricalImportResult } from '../../../core/models/import.model';
 import { ImportService } from '../../../core/services/import.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { UserService } from '../../../core/services/user.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { FileUploadBoxComponent } from '../../../shared/components/file-upload-box/file-upload-box.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -46,12 +47,14 @@ export class HistoricalImportComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly importService = inject(ImportService);
   private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
   private readonly notification = inject(NotificationService);
 
   loading = false;
   selectedFile: File | null = null;
   result: HistoricalImportResult | null = null;
   managers: User[] = [];
+  isAdmin = this.authService.hasRole('ADMIN');
   excelColumns = EXCEL_COLUMNS;
   errorColumns = ['row_number', 'column_name', 'error_message'];
 
@@ -62,9 +65,11 @@ export class HistoricalImportComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.userService.getUsers({ page_size: 100 }).subscribe((res) => {
-      this.managers = res.data.items.filter((u) => u.role === 'MANAGER' || u.role === 'ADMIN');
-    });
+    if (this.isAdmin) {
+      this.userService.getManagersForSelect().subscribe((managers) => {
+        this.managers = managers;
+      });
+    }
   }
 
   onFileSelected(file: File): void {
@@ -89,6 +94,11 @@ export class HistoricalImportComponent implements OnInit {
     const value = this.form.getRawValue();
     if (value.default_manager_id) {
       formData.append('default_manager_id', value.default_manager_id);
+    } else if (!this.isAdmin) {
+      const current = this.authService.getCurrentUser();
+      if (current && (current.role === 'MANAGER' || current.role === 'ADMIN')) {
+        formData.append('default_manager_id', current.id);
+      }
     }
     if (value.default_exchange_rate) {
       formData.append('default_exchange_rate', String(value.default_exchange_rate));

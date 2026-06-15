@@ -1,0 +1,55 @@
+.chat-widget {
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1099;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    animation: chat-backdrop-in 0.2s ease;
+  }
+
+  &__fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 1098;
+    --mdc-fab-container-color: #5b21b6;
+    --mdc-fab-icon-color: #ffffff;
+    box-shadow:
+      0 4px 14px rgba(91, 33, 182, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow:
+        0 8px 24px rgba(91, 33, 182, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+@keyframes chat-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .chat-widget__fab {
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    right: max(1rem, env(safe-area-inset-right));
+  }
+}

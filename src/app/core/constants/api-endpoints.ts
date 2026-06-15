@@ -45,4 +45,8 @@ export const API_ENDPOINTS = {
     list: '/imports',
     errors: (batchId: string) => `/imports/${batchId}/errors`,
   },
+  aiChat: {
+    sendMessage: '/ai/chat/messages',
+    confirmAction: '/ai/chat/actions/confirm',
+  },
 } as const;

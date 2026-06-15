@@ -1,15 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { formatMonthYear } from '../utils/date-format.util';
 
 @Pipe({ name: 'monthLabel', standalone: true })
 export class MonthLabelPipe implements PipeTransform {
   transform(value: string | null | undefined): string {
-    if (!value) {
-      return '-';
-    }
-    const date = new Date(value);
-    if (isNaN(date.getTime())) {
-      return value;
-    }
-    return date.toLocaleDateString('es-PE', { year: 'numeric', month: 'long' });
+    return formatMonthYear(value);
   }
 }

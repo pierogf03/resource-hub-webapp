@@ -7,6 +7,7 @@ import { UserRole } from '../constants/status.constants';
 import { ApiResponse } from '../models/api-response.model';
 import { AuthUser, LoginRequest, LoginResponse } from '../models/auth.model';
 import { StorageService } from './storage.service';
+import { clearChatSessionStorage } from '../utils/chat-session.util';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -36,6 +37,7 @@ export class AuthService {
   }
 
   logout(): void {
+    clearChatSessionStorage();
     this.storage.clearSession();
   }
 

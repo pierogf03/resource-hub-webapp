@@ -1,0 +1,100 @@
+@if (open) {
+  <div class="chat-panel" role="dialog" aria-label="Resource Hub Assistant">
+    <header class="chat-panel__header">
+      <div class="chat-panel__brand">
+        <div class="chat-panel__avatar" aria-hidden="true">
+          <mat-icon>smart_toy</mat-icon>
+        </div>
+        <div class="chat-panel__header-text">
+          <h2 class="chat-panel__title">Resource Hub Assistant</h2>
+          <p
+            class="chat-panel__subtitle"
+            [attr.data-key]="welcomeMessageKey()"
+          >
+            {{ headerWelcomeMessage() }}
+          </p>
+        </div>
+      </div>
+      <div class="chat-panel__header-actions">
+        <button
+          mat-icon-button
+          type="button"
+          class="chat-panel__action-btn"
+          aria-label="Limpiar conversación"
+          title="Limpiar conversación"
+          [disabled]="isSending() || isConfirming()"
+          (click)="onClearConversation()"
+        >
+          <mat-icon>delete_sweep</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          class="chat-panel__close-btn"
+          aria-label="Cerrar chat"
+          title="Cerrar"
+          (click)="onClose()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </header>
+
+    <div class="chat-panel__body" #messagesContainer>
+      @if (showSuggestions) {
+        <div class="chat-panel__welcome">
+          <div class="chat-panel__welcome-icon" aria-hidden="true">
+            <mat-icon>waving_hand</mat-icon>
+          </div>
+          <p class="chat-panel__welcome-text">
+            Hola, soy tu asistente de Resource Hub. Elige una pregunta o escribe la tuya.
+          </p>
+        </div>
+        <app-chat-suggestions
+          [suggestions]="suggestedQuestions()"
+          [disabled]="isSending()"
+          (selectSuggestion)="onSelectSuggestion($event)"
+        />
+      }
+
+      @for (message of messages(); track message.id) {
+        <app-chat-message
+          [message]="message"
+          (typingTick)="onTypingTick(message.id)"
+          (typingComplete)="onTypingComplete(message.id)"
+        />
+      }
+
+      @if (showFollowUpSuggestions) {
+        <app-chat-suggestions
+          [suggestions]="suggestedQuestions()"
+          [disabled]="isSending()"
+          (selectSuggestion)="onSelectSuggestion($event)"
+        />
+      }
+
+      @if (pendingAction(); as action) {
+        <app-chat-pending-action
+          [pendingAction]="action"
+          [disabled]="isSending() || isConfirming()"
+          (confirm)="onConfirmAction()"
+          (cancel)="onCancelAction()"
+        />
+      }
+
+      @if (errorMessage(); as error) {
+        <div class="chat-panel__error" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+      }
+    </div>
+
+    <footer class="chat-panel__footer">
+      <app-chat-input
+        [disabled]="isSending() || isConfirming()"
+        (send)="onSendMessage($event)"
+      />
+    </footer>
+  </div>
+}

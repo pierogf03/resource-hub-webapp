@@ -1,8 +1,8 @@
 <aside class="sidebar" [class.sidebar--collapsed]="isCollapsed" [class.sidebar--mobile]="mobile">
   <div class="sidebar__header">
-    <button class="sidebar__logo" type="button" aria-label="ResourcePulse" (click)="onToggle()">
+    <a class="sidebar__logo" routerLink="/dashboard" aria-label="ResourcePulse" (click)="onNavClick()">
       <mat-icon>monitoring</mat-icon>
-    </button>
+    </a>
     @if (!isCollapsed) {
       <div class="sidebar__brand">
         <span class="sidebar__brand-name">ResourcePulse</span>

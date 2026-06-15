@@ -76,6 +76,54 @@ Credenciales de prueba (según backend):
 | Purchase Orders | `GET/POST /purchase-orders`, `PUT /purchase-orders/{id}` |
 | Dashboard | `GET /dashboard/summary`, `GET /dashboard/expiring-resources` |
 | Imports | `POST /imports/historical-excel`, `GET /imports`, `GET /imports/{batch_id}/errors` |
+| AI Chat | `POST /ai/chat/messages`, `POST /ai/chat/actions/confirm` |
+
+## Resource Hub Assistant
+
+Asistente de chat embebido en el layout autenticado para consultar recursos, OCs, vencimientos, presupuesto e importaciones mediante lenguaje natural.
+
+### Arquitectura
+
+```
+Usuario → Chat Widget → AiChatService → FastAPI → Workato/Genie
+```
+
+Angular consume únicamente el backend Resource Hub. La integración con Workato/Genie se realiza desde FastAPI. El frontend no almacena API keys ni se conecta directamente a Workato.
+
+### Endpoints
+
+| Método | Ruta | Uso |
+|--------|------|-----|
+| `POST` | `/ai/chat/messages` | Enviar mensaje y recibir respuesta del asistente |
+| `POST` | `/ai/chat/actions/confirm` | Confirmar o rechazar acciones pendientes (generar OCs, aprobar OC, etc.) |
+
+### Componentes
+
+| Componente | Ubicación | Responsabilidad |
+|------------|-----------|-----------------|
+| `ChatWidgetComponent` | `features/ai-chat/chat-widget` | Botón flotante morado para abrir/cerrar el chat |
+| `ChatPanelComponent` | `features/ai-chat/chat-panel` | Panel lateral con estado, mensajes y orquestación |
+| `ChatMessageComponent` | `features/ai-chat/chat-message` | Burbujas de mensaje user/assistant/system |
+| `ChatInputComponent` | `features/ai-chat/chat-input` | Entrada de texto con validación |
+| `ChatSuggestionsComponent` | `features/ai-chat/chat-suggestions` | Preguntas sugeridas |
+| `ChatPendingActionComponent` | `features/ai-chat/chat-pending-action` | Tarjeta de confirmación de acciones |
+
+### Seguridad
+
+- JWT adjunto automáticamente por `AuthInterceptor`
+- Chat visible solo en layout autenticado (no en `/login`)
+- Sesión del chat en `sessionStorage`; se limpia al cerrar sesión
+- Sin API keys ni credenciales de Workato en el frontend
+
+### Flujo de confirmaciones
+
+Cuando el asistente propone una acción (ej. generar OCs mensuales), la respuesta incluye `requires_confirmation: true` y un `pending_action`. El usuario debe confirmar o cancelar; la decisión se envía a `POST /ai/chat/actions/confirm`.
+
+### Limitaciones del asistente
+
+- Depende del backend FastAPI con endpoints `/ai/chat/*` operativos
+- Sin historial persistente entre sesiones del navegador (solo `sessionStorage`)
+- Sin streaming de respuestas (request/response síncrono)
 
 ## Seguridad
 
@@ -94,13 +142,13 @@ Credenciales de prueba (según backend):
 
 ## Limitaciones actuales
 
-- No hay integración con IA
 - No hay reportes PDF
 - No hay integración real con Coupa
 - Depende del backend FastAPI en ejecución
 
 ## Próximos pasos
 
+- Streaming de respuestas del asistente
 - Mejorar gráficos del dashboard
 - Agregar reportes ejecutivos
 - Agregar pruebas unitarias

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { USER_ROLE_LABELS } from '../../core/constants/status.constants';
@@ -15,9 +15,7 @@ export class HeaderComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  @Input() sidebarExpanded = true;
   @Output() menuToggle = new EventEmitter<void>();
-  @Output() sidebarToggle = new EventEmitter<void>();
 
   get user() {
     return this.authService.getCurrentUser();

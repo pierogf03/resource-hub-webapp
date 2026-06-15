@@ -8,14 +8,6 @@
     >
       <mat-icon>menu</mat-icon>
     </button>
-    <button
-      class="header__icon-btn header__collapse-btn"
-      type="button"
-      (click)="sidebarToggle.emit()"
-      [attr.aria-label]="sidebarExpanded ? 'Contraer sidebar' : 'Expandir sidebar'"
-    >
-      <mat-icon>{{ sidebarExpanded ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-    </button>
   </div>
 
   <div class="header__spacer"></div>

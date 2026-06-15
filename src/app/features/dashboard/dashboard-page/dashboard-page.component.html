@@ -3,41 +3,119 @@
   subtitle="Vista general de asignaciones, costos y alertas de vencimiento"
 ></app-page-header>
 
-@if (loading) {
-  <app-loading-spinner></app-loading-spinner>
+@if (summaryLoading) {
+  <app-loading-spinner message="Cargando indicadores..."></app-loading-spinner>
 } @else if (summary) {
-  <section class="kpi-grid">
-    <app-stat-card title="Asignaciones activas" [value]="summary.active_assignments" icon="assignment" variant="primary"></app-stat-card>
-    <app-stat-card title="Por vencer" [value]="summary.expiring_soon" icon="schedule" variant="warning"></app-stat-card>
-    <app-stat-card title="Vencidos" [value]="summary.expired" icon="warning" variant="danger"></app-stat-card>
-    <app-stat-card title="Costo mensual USD" [value]="summary.total_monthly_cost_usd | usdCurrency" icon="payments" variant="info"></app-stat-card>
-    <app-stat-card title="Costo comprometido USD" [value]="summary.total_committed_cost_usd | usdCurrency" icon="account_balance" variant="primary"></app-stat-card>
-    <app-stat-card title="OCs pendientes" [value]="summary.purchase_orders.pending" icon="pending_actions" variant="warning"></app-stat-card>
-    <app-stat-card title="OCs aprobadas" [value]="summary.purchase_orders.approved" icon="check_circle" variant="success"></app-stat-card>
-    <app-stat-card title="OCs cerradas" [value]="summary.purchase_orders.closed" icon="lock" variant="neutral"></app-stat-card>
+  <section class="kpi-grid" aria-label="Indicadores principales">
+    <app-stat-card
+      title="Asignaciones activas"
+      [value]="summary.active_assignments"
+      icon="assignment"
+      variant="primary"
+      link="/assignments"
+      [queryParams]="{ status: 'ACTIVE' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="Por vencer"
+      [value]="summary.expiring_soon"
+      icon="schedule"
+      variant="warning"
+      link="/assignments"
+      [queryParams]="{ alert: 'AMBER' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="Vencidos"
+      [value]="summary.expired"
+      icon="warning"
+      variant="danger"
+      link="/assignments"
+      [queryParams]="{ alert: 'RED' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="Costo mensual USD"
+      [value]="summary.total_monthly_cost_usd | usdCurrency"
+      icon="payments"
+      variant="info"
+      link="/assignments"
+    ></app-stat-card>
+    <app-stat-card
+      title="Costo comprometido USD"
+      [value]="summary.total_committed_cost_usd | usdCurrency"
+      icon="account_balance"
+      variant="primary"
+      link="/assignments"
+    ></app-stat-card>
+    <app-stat-card
+      title="OCs pendientes"
+      [value]="summary.purchase_orders.pending"
+      icon="pending_actions"
+      variant="warning"
+      link="/purchase-orders"
+      [queryParams]="{ status: 'PENDING' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="OCs aprobadas"
+      [value]="summary.purchase_orders.approved"
+      icon="check_circle"
+      variant="success"
+      link="/purchase-orders"
+      [queryParams]="{ status: 'APPROVED' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="OCs cerradas"
+      [value]="summary.purchase_orders.closed"
+      icon="lock"
+      variant="neutral"
+      link="/purchase-orders"
+      [queryParams]="{ status: 'CLOSED' }"
+    ></app-stat-card>
   </section>
 
   <section class="dashboard-section">
     <h2>Semáforo de vencimientos</h2>
+    <p class="dashboard-section__hint">Haz clic en un estado para ver las asignaciones filtradas.</p>
     <div class="traffic-lights">
-      <div class="traffic-light traffic-light--green">
+      <a
+        class="traffic-light traffic-light--green"
+        routerLink="/assignments"
+        [queryParams]="{ alert: 'GREEN' }"
+      >
         <span class="traffic-light__count">{{ summary.expiration_alerts.green }}</span>
         <span class="traffic-light__label">Vigente</span>
-      </div>
-      <div class="traffic-light traffic-light--amber">
+
+      </a>
+      <a
+        class="traffic-light traffic-light--amber"
+        routerLink="/assignments"
+        [queryParams]="{ alert: 'AMBER' }"
+      >
         <span class="traffic-light__count">{{ summary.expiration_alerts.amber }}</span>
         <span class="traffic-light__label">Por vencer</span>
-      </div>
-      <div class="traffic-light traffic-light--red">
+
+      </a>
+      <a
+        class="traffic-light traffic-light--red"
+        routerLink="/assignments"
+        [queryParams]="{ alert: 'RED' }"
+      >
         <span class="traffic-light__count">{{ summary.expiration_alerts.red }}</span>
         <span class="traffic-light__label">Crítico / vencido</span>
-      </div>
+
+      </a>
     </div>
   </section>
 
-  <section class="dashboard-section">
-    <h2>Recursos próximos a vencer</h2>
-    @if (expiringResources.length === 0) {
+  <section class="dashboard-section" id="expiring-resources-section">
+    <div class="dashboard-section__header">
+      <h2>Recursos próximos a vencer</h2>
+      <a routerLink="/assignments" [queryParams]="{ alert: 'AMBER' }" class="dashboard-link">
+        Ver todas las asignaciones
+      </a>
+    </div>
+
+    @if (expiringLoading) {
+      <app-loading-spinner message="Cargando recursos..."></app-loading-spinner>
+    } @else if (expiringResources.length === 0) {
       <app-empty-state title="Sin alertas" message="No hay recursos próximos a vencer."></app-empty-state>
     } @else {
       <div class="table-container">

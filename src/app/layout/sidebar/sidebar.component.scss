@@ -43,14 +43,15 @@
   flex-shrink: 0;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, #5b21b6, #7c3aed);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(91, 33, 182, 0.35);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 
   mat-icon {
     font-size: 22px;
@@ -148,12 +149,12 @@
   }
 
   &--active {
-    background: rgba(79, 110, 247, 0.15);
+    background: rgba(37, 99, 235, 0.12);
     color: #fff;
 
     .sidebar__nav-icon {
-      background: var(--shell-accent, #4f6ef7);
-      box-shadow: 0 4px 12px rgba(79, 110, 247, 0.35);
+      background: var(--shell-accent, #2563eb);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 
       mat-icon {
         color: #fff;

@@ -26,11 +26,7 @@
       </aside>
 
       <div class="main-layout__main-column">
-        <app-header
-          [sidebarExpanded]="sidebarExpanded()"
-          (menuToggle)="openMobileDrawer()"
-          (sidebarToggle)="toggleSidebar()"
-        ></app-header>
+        <app-header (menuToggle)="openMobileDrawer()"></app-header>
         <main class="main-layout__main">
           <router-outlet></router-outlet>
         </main>
@@ -38,3 +34,7 @@
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+@if (isAuthenticated()) {
+  <app-chat-widget />
+}

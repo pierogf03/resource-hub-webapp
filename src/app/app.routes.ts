@@ -57,6 +57,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'purchase-orders',
+        loadComponent: () =>
+          import('./features/purchase-orders/purchase-order-list/purchase-order-list.component').then(
+            (m) => m.PurchaseOrderListComponent
+          ),
+      },
+      {
         path: 'assignments/new',
         loadComponent: () =>
           import('./features/assignments/assignment-form/assignment-form.component').then(
@@ -75,13 +82,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/assignments/assignment-detail/assignment-detail.component').then(
             (m) => m.AssignmentDetailComponent
-          ),
-      },
-      {
-        path: 'purchase-orders',
-        loadComponent: () =>
-          import('./features/purchase-orders/purchase-order-list/purchase-order-list.component').then(
-            (m) => m.PurchaseOrderListComponent
           ),
       },
       {

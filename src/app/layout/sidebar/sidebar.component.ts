@@ -39,13 +39,16 @@ export class SidebarComponent {
     {
       title: 'Gestión',
       items: [
-        { label: 'Usuarios', route: '/users', icon: 'group', adminOnly: true },
         { label: 'Proveedores', route: '/providers', icon: 'storefront' },
         { label: 'Iniciativas', route: '/initiatives', icon: 'flag' },
         { label: 'Recursos externos', route: '/external-resources', icon: 'badge' },
         { label: 'Asignaciones', route: '/assignments', icon: 'assignment_ind' },
         { label: 'Órdenes de compra', route: '/purchase-orders', icon: 'receipt_long' },
       ],
+    },
+    {
+      title: 'Configuración del sistema',
+      items: [{ label: 'Usuarios', route: '/users', icon: 'group', adminOnly: true }],
     },
     {
       title: 'Importación',

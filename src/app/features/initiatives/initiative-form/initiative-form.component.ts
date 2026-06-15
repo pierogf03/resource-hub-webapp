@@ -9,8 +9,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Initiative } from '../../../core/models/initiative.model';
 import { User } from '../../../core/models/user.model';
 import { InitiativeService } from '../../../core/services/initiative.service';
-import { UserService } from '../../../core/services/user.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { UserService } from '../../../core/services/user.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 export interface InitiativeFormData {
   initiative?: Initiative;
@@ -34,6 +35,7 @@ export class InitiativeFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly initiativeService = inject(InitiativeService);
   private readonly userService = inject(UserService);
+  private readonly authService = inject(AuthService);
   private readonly notification = inject(NotificationService);
   private readonly dialogRef = inject(MatDialogRef<InitiativeFormComponent>);
   readonly data = inject<InitiativeFormData>(MAT_DIALOG_DATA);
@@ -41,6 +43,7 @@ export class InitiativeFormComponent implements OnInit {
   isEdit = false;
   loading = false;
   managers: User[] = [];
+  showManagerField = false;
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -51,8 +54,9 @@ export class InitiativeFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.userService.getUsers({ page_size: 100 }).subscribe((res) => {
-      this.managers = res.data.items.filter((u) => u.role === 'MANAGER' || u.role === 'ADMIN');
+    this.userService.getManagersForSelect().subscribe((managers) => {
+      this.managers = managers;
+      this.showManagerField = this.authService.hasRole('ADMIN') || managers.length > 1;
     });
 
     if (this.data.initiative) {

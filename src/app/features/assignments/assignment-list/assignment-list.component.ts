@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -58,6 +58,7 @@ export class AssignmentListComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   loading = true;
   assignments: Assignment[] = [];
@@ -95,11 +96,22 @@ export class AssignmentListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    const status = this.route.snapshot.queryParamMap.get('status');
+    const alert = this.route.snapshot.queryParamMap.get('alert');
+    if (status) {
+      this.statusFilter.setValue(status);
+    }
+    if (alert) {
+      this.alertFilter.setValue(alert as ExpirationAlert);
+    }
+
     this.providerService.getProviders({ page_size: 100 }).subscribe((r) => (this.providers = r.data.items));
     this.initiativeService.getInitiatives({ page_size: 100 }).subscribe((r) => (this.initiatives = r.data.items));
-    this.userService.getUsers({ page_size: 100 }).subscribe((r) => {
-      this.managers = r.data.items.filter((u) => u.role === 'MANAGER' || u.role === 'ADMIN');
-    });
+    if (this.isAdmin) {
+      this.userService.getManagersForSelect().subscribe((managers) => {
+        this.managers = managers;
+      });
+    }
     this.loadAssignments();
   }
 
