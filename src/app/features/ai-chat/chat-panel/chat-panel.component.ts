@@ -34,9 +34,8 @@ import {
 } from '../../../core/utils/chat-session.util';
 
 const HEADER_WELCOME_MESSAGES = [
-  'Consulta recursos, OCs, vencimientos y presupuesto',
   '¿Qué recursos están por vencer hoy?',
-  'Revisa el presupuesto comprometido de tu área',
+  'Revisa el presupuesto comprometido',
   'Pregúntame por las OCs pendientes del mes',
   'Te ayudo con importaciones y alertas en rojo',
   'Genera OCs mensuales con un solo mensaje',
