@@ -1,0 +1,140 @@
+<app-page-header
+  title="Asignaciones"
+  subtitle="Gestiona la contratación, costos y vencimientos de tus recursos externos."
+  actionLabel="Nueva asignación"
+  [showAction]="true"
+  (actionClick)="createNew()"
+></app-page-header>
+
+<app-search-filter-bar placeholder="Buscar por consultor..." (searchChange)="onSearch($event)">
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="statusFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todos</mat-option>
+      <mat-option value="ACTIVE">Activa</mat-option>
+      <mat-option value="CLOSED">Cerrada</mat-option>
+      <mat-option value="CANCELLED">Cancelada</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Proveedor</mat-label>
+    <mat-select [formControl]="providerFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todos</mat-option>
+      @for (p of providers; track p.id) {
+        <mat-option [value]="p.id">{{ p.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Iniciativa</mat-label>
+    <mat-select [formControl]="initiativeFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todas</mat-option>
+      @for (i of initiatives; track i.id) {
+        <mat-option [value]="i.id">{{ i.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Alerta</mat-label>
+    <mat-select [formControl]="alertFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todas</mat-option>
+      <mat-option value="GREEN">Vigente</mat-option>
+      <mat-option value="AMBER">Por vencer</mat-option>
+      <mat-option value="RED">Crítico</mat-option>
+    </mat-select>
+  </mat-form-field>
+  @if (isAdmin) {
+    <mat-form-field appearance="outline">
+      <mat-label>Manager</mat-label>
+      <mat-select [formControl]="managerFilter" (selectionChange)="onFilterChange()">
+        <mat-option value="">Todos</mat-option>
+        @for (m of managers; track m.id) {
+          <mat-option [value]="m.id">{{ m.full_name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+</app-search-filter-bar>
+
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (assignments.length === 0) {
+  <app-empty-state message="No hay asignaciones registradas."></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="assignments">
+      <ng-container matColumnDef="consultant_name">
+        <th mat-header-cell *matHeaderCellDef>Consultor</th>
+        <td mat-cell *matCellDef="let row">{{ row.consultant_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="technical_profile">
+        <th mat-header-cell *matHeaderCellDef>Perfil</th>
+        <td mat-cell *matCellDef="let row">{{ row.technical_profile }}</td>
+      </ng-container>
+      <ng-container matColumnDef="provider_name">
+        <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+        <td mat-cell *matCellDef="let row">{{ row.provider_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="main_initiative_name">
+        <th mat-header-cell *matHeaderCellDef>Iniciativa</th>
+        <td mat-cell *matCellDef="let row">{{ row.main_initiative_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="manager_name">
+        <th mat-header-cell *matHeaderCellDef>Manager</th>
+        <td mat-cell *matCellDef="let row">{{ row.manager_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="start_date">
+        <th mat-header-cell *matHeaderCellDef>Inicio</th>
+        <td mat-cell *matCellDef="let row">{{ formatDate(row.start_date) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="end_date">
+        <th mat-header-cell *matHeaderCellDef>Fin</th>
+        <td mat-cell *matCellDef="let row">{{ formatDate(row.end_date) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="monthly_cost_usd">
+        <th mat-header-cell *matHeaderCellDef>Costo mensual USD</th>
+        <td mat-cell *matCellDef="let row">{{ row.monthly_cost_usd | usdCurrency }}</td>
+      </ng-container>
+      <ng-container matColumnDef="days_to_end">
+        <th mat-header-cell *matHeaderCellDef>Días restantes</th>
+        <td mat-cell *matCellDef="let row">{{ row.days_to_end | daysLeft }}</td>
+      </ng-container>
+      <ng-container matColumnDef="expiration_alert">
+        <th mat-header-cell *matHeaderCellDef>Semáforo</th>
+        <td mat-cell *matCellDef="let row">
+          <app-expiration-badge [alert]="row.expiration_alert" [daysToEnd]="row.days_to_end"></app-expiration-badge>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="purchase_orders_count">
+        <th mat-header-cell *matHeaderCellDef>OCs</th>
+        <td mat-cell *matCellDef="let row">{{ row.purchase_orders_count }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">
+          <app-status-chip [status]="row.status" type="assignment"></app-status-chip>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [routerLink]="['/assignments', row.id]" aria-label="Ver">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button [routerLink]="['/assignments', row.id, 'edit']" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [length]="total"
+    [pageSize]="pageSize"
+    [pageIndex]="page - 1"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="onPage($event)"
+  ></mat-paginator>
+}

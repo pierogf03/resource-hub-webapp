@@ -1,0 +1,57 @@
+<div
+  class="chat-message"
+  [class.chat-message--user]="isUser"
+  [class.chat-message--assistant]="isAssistant"
+  [class.chat-message--system]="isSystem"
+>
+  @if (isSystem) {
+    <p class="chat-message__system-text">{{ message.content }}</p>
+  } @else {
+    @if (isAssistant) {
+      <div class="chat-message__avatar" aria-hidden="true">
+        <mat-icon>smart_toy</mat-icon>
+      </div>
+    }
+
+    <div class="chat-message__bubble">
+      @if (message.is_loading) {
+        <div class="chat-message__loading">
+          <mat-spinner diameter="18"></mat-spinner>
+          <span>Pensando...</span>
+        </div>
+      } @else if (renderAsMarkdown) {
+        <div class="chat-message__markdown-wrap">
+          <div
+            class="chat-message__content chat-message__markdown"
+            [innerHTML]="contentToShow | chatMarkdown"
+          ></div>
+        </div>
+      } @else {
+        <div class="chat-message__content chat-message__content--plain">
+          {{ contentToShow }}@if (isTyping) {<span class="chat-message__cursor" aria-hidden="true"></span>}
+        </div>
+      }
+
+      @if (showMetadata && message.used_skills?.length) {
+        <div class="chat-message__skills">
+          <button
+            type="button"
+            class="chat-message__skills-toggle"
+            [attr.aria-expanded]="skillsExpanded"
+            (click)="toggleSkills($event)"
+          >
+            <mat-icon>{{ skillsExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <span>Skills usadas ({{ message.used_skills!.length }})</span>
+          </button>
+          @if (skillsExpanded) {
+            <div class="chat-message__skills-list">
+              @for (skill of message.used_skills; track skill) {
+                <span class="chat-message__skill-tag">{{ skill }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

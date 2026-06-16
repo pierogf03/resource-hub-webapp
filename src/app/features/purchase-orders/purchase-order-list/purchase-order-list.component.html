@@ -1,0 +1,109 @@
+<app-page-header
+  title="Órdenes de compra"
+  subtitle="Control mensual de órdenes de compra asociadas a cada asignación."
+  actionLabel="Nueva OC"
+  [showAction]="true"
+  (actionClick)="openForm()"
+></app-page-header>
+
+<app-search-filter-bar placeholder="Buscar..." (searchChange)="onSearch($event)">
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [formControl]="statusFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todos</mat-option>
+      @for (s of statuses; track s) {
+        <mat-option [value]="s">{{ s }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Proveedor</mat-label>
+    <mat-select [formControl]="providerFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todos</mat-option>
+      @for (p of providers; track p.id) {
+        <mat-option [value]="p.id">{{ p.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Asignación</mat-label>
+    <mat-select [formControl]="assignmentFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todas</mat-option>
+      @for (a of assignments; track a.id) {
+        <mat-option [value]="a.id">{{ a.consultant_name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <app-month-picker-field
+    label="Periodo desde"
+    [formControl]="periodFrom"
+    (valueChange)="onFilterChange()"
+  ></app-month-picker-field>
+  <app-month-picker-field
+    label="Periodo hasta"
+    [formControl]="periodTo"
+    (valueChange)="onFilterChange()"
+  ></app-month-picker-field>
+</app-search-filter-bar>
+
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (purchaseOrders.length === 0) {
+  <app-empty-state message="No hay órdenes de compra registradas."></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="purchaseOrders">
+      <ng-container matColumnDef="consultant_name">
+        <th mat-header-cell *matHeaderCellDef>Consultor</th>
+        <td mat-cell *matCellDef="let row">{{ row.consultant_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="provider_name">
+        <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+        <td mat-cell *matCellDef="let row">{{ row.provider_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="period_month">
+        <th mat-header-cell *matHeaderCellDef>Periodo</th>
+        <td mat-cell *matCellDef="let row">{{ row.period_month | monthLabel }}</td>
+      </ng-container>
+      <ng-container matColumnDef="po_number">
+        <th mat-header-cell *matHeaderCellDef>Número OC</th>
+        <td mat-cell *matCellDef="let row">{{ row.po_number || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">
+          <app-status-chip [status]="row.status" type="purchase-order"></app-status-chip>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Importe</th>
+        <td mat-cell *matCellDef="let row">{{ row.amount }}</td>
+      </ng-container>
+      <ng-container matColumnDef="currency">
+        <th mat-header-cell *matHeaderCellDef>Moneda</th>
+        <td mat-cell *matCellDef="let row">{{ row.currency }}</td>
+      </ng-container>
+      <ng-container matColumnDef="amount_usd">
+        <th mat-header-cell *matHeaderCellDef>Importe USD</th>
+        <td mat-cell *matCellDef="let row">{{ row.amount_usd | usdCurrency }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="openForm(row)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [length]="total"
+    [pageSize]="pageSize"
+    [pageIndex]="page - 1"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="onPage($event)"
+  ></mat-paginator>
+}

@@ -1,0 +1,6 @@
+<span class="expiration-badge" [style.color]="config.color" [style.background-color]="config.bg">
+  {{ config.label }}
+  @if (daysToEnd !== undefined && daysToEnd !== null) {
+    <span class="expiration-badge__days">({{ daysToEnd | daysLeft }})</span>
+  }
+</span>

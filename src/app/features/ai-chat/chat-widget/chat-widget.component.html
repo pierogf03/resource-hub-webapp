@@ -1,0 +1,27 @@
+<div class="chat-widget">
+  @if (isOpen()) {
+    <button
+      type="button"
+      class="chat-widget__backdrop"
+      aria-label="Cerrar chat"
+      (click)="close()"
+    ></button>
+  }
+
+  <app-chat-panel [open]="isOpen()" (closePanel)="close()" />
+
+  @if (!isOpen()) {
+    <button
+      mat-fab
+      type="button"
+      class="chat-widget__fab"
+      matTooltip="Resource Hub Assistant"
+      matTooltipPosition="left"
+      aria-label="Abrir Resource Hub Assistant"
+      [attr.aria-expanded]="false"
+      (click)="toggle()"
+    >
+      <mat-icon>chat</mat-icon>
+    </button>
+  }
+</div>

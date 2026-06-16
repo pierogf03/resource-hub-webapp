@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar iniciativa' : 'Nueva iniciativa' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form-grid">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" />
+      @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+    @if (showManagerField) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Manager responsable</mat-label>
+        <mat-select formControlName="responsible_manager_id">
+          <mat-option value="">Sin asignar</mat-option>
+          @for (manager of managers; track manager.id) {
+            <mat-option [value]="manager.id">{{ manager.full_name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+    <mat-form-field appearance="outline">
+      <mat-label>Presupuesto USD</mat-label>
+      <input matInput type="number" formControlName="budget_usd" min="0" />
+      @if (form.controls.budget_usd.hasError('min') && form.controls.budget_usd.touched) {
+        <mat-error>Debe ser mayor o igual a 0</mat-error>
+      }
+    </mat-form-field>
+    @if (isEdit) {
+      <div class="dialog-form-toggle">
+        <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      </div>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="submit()">Guardar</button>
+</mat-dialog-actions>

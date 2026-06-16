@@ -1,0 +1,161 @@
+<app-page-header
+  [title]="isEdit ? 'Editar asignación' : 'Nueva asignación'"
+  subtitle="Completa los datos de la asignación del recurso externo"
+></app-page-header>
+
+@if (pageLoading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else {
+  <mat-card class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-page-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Consultor externo</mat-label>
+          <mat-select formControlName="resource_id">
+            @for (r of resources; track r.id) {
+              <mat-option [value]="r.id">{{ r.consultant_name }} - {{ r.technical_profile }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Proveedor</mat-label>
+          <mat-select formControlName="provider_id">
+            @for (p of providers; track p.id) {
+              <mat-option [value]="p.id">{{ p.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Iniciativa principal</mat-label>
+          <mat-select formControlName="main_initiative_id">
+            @for (i of initiatives; track i.id) {
+              <mat-option [value]="i.id">{{ i.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (showManagerField) {
+          <mat-form-field appearance="outline">
+            <mat-label>Manager</mat-label>
+            <mat-select formControlName="manager_id">
+              @for (m of managers; track m.id) {
+                <mat-option [value]="m.id">{{ m.full_name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+        @if (showAnalystField) {
+          <mat-form-field appearance="outline">
+            <mat-label>Analista responsable</mat-label>
+            <mat-select formControlName="analyst_responsible_id">
+              <mat-option value="">Sin asignar</mat-option>
+              @for (a of analysts; track a.id) {
+                <mat-option [value]="a.id">{{ a.full_name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha inicio</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="start_date" />
+          <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha fin</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="end_date" />
+          <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+          @if (form.hasError('dateRange')) {
+            <mat-error>La fecha fin debe ser mayor o igual a la fecha inicio</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Duración (meses)</mat-label>
+          <input matInput type="number" formControlName="duration_months" min="1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Costo mensual</mat-label>
+          <input matInput type="number" formControlName="monthly_cost" min="0" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Moneda</mat-label>
+          <mat-select formControlName="currency">
+            <mat-option value="USD">USD</mat-option>
+            <mat-option value="PEN">PEN</mat-option>
+          </mat-select>
+        </mat-form-field>
+        @if (form.controls.currency.value === 'PEN') {
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de cambio</mat-label>
+            <input matInput type="number" formControlName="exchange_rate" min="0.01" step="0.01" />
+            @if (form.hasError('exchangeRateRequired')) {
+              <mat-error>Tipo de cambio obligatorio y mayor a 0</mat-error>
+            }
+          </mat-form-field>
+          @if (monthlyCostUsd !== null) {
+            <div class="form-hint form-hint--usd">
+              Equivalente en USD: <strong>{{ monthlyCostUsd | usdCurrency }}</strong>
+            </div>
+          }
+        }
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Comentarios</mat-label>
+          <textarea matInput formControlName="comments" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+
+      <section class="form-section">
+        <div class="form-section__header">
+          <h3>Asignaciones parciales por iniciativa</h3>
+          <button mat-stroked-button color="primary" type="button" (click)="addInitiativeRow()">
+            <mat-icon>add</mat-icon>
+            Agregar iniciativa
+          </button>
+        </div>
+        <div class="embedded-table" formArrayName="initiatives">
+          @if (initiativesArray.length === 0) {
+            <div class="embedded-table__empty">
+              No hay iniciativas parciales. Usa «Agregar iniciativa» para distribuir el porcentaje de asignación.
+            </div>
+          } @else {
+            <div class="embedded-table__head">
+              <span>Iniciativa</span>
+              <span>% Asignación</span>
+              <span>Principal</span>
+              <span>Fuente de fondeo</span>
+              <span></span>
+            </div>
+            @for (row of initiativesArray.controls; track $index; let i = $index) {
+              <div class="embedded-table__row" [formGroupName]="i">
+                <mat-form-field appearance="outline">
+                  <mat-label>Iniciativa</mat-label>
+                  <mat-select formControlName="initiative_id">
+                    @for (init of initiatives; track init.id) {
+                      <mat-option [value]="init.id">{{ init.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>% Asignación</mat-label>
+                  <input matInput type="number" formControlName="allocation_percentage" min="0" max="100" />
+                </mat-form-field>
+                <mat-checkbox formControlName="is_primary">Principal</mat-checkbox>
+                <mat-checkbox formControlName="is_funding_source">Fuente de fondeo</mat-checkbox>
+                <button mat-icon-button type="button" (click)="removeInitiativeRow(i)" aria-label="Eliminar fila">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </section>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="cancel()">Cancelar</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="loading">
+          {{ isEdit ? 'Actualizar' : 'Crear' }} asignación
+        </button>
+      </div>
+    </form>
+  </mat-card>
+}

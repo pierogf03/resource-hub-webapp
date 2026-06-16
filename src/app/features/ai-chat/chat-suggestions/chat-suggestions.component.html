@@ -1,0 +1,18 @@
+<div class="chat-suggestions">
+  <div class="chat-suggestions__header">
+    <mat-icon>lightbulb</mat-icon>
+    <span>Preguntas sugeridas</span>
+  </div>
+  <div class="chat-suggestions__list">
+    @for (suggestion of suggestions; track suggestion) {
+      <button
+        type="button"
+        class="chat-suggestions__chip"
+        [disabled]="disabled"
+        (click)="onSelect(suggestion)"
+      >
+        {{ suggestion }}
+      </button>
+    }
+  </div>
+</div>

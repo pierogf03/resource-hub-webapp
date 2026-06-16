@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.form-hint {
+  grid-column: 1 / -1;
+  font-size: 0.8125rem;
+  color: #6b7280;
+
+  strong {
+    color: #1f2937;
+  }
+}
+
+.form-hint--usd {
+  margin-top: -0.5rem;
+}

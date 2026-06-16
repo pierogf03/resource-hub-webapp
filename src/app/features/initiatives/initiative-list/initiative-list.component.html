@@ -1,0 +1,53 @@
+<app-page-header
+  title="Iniciativas"
+  subtitle="Gestiona proyectos e iniciativas"
+  actionLabel="Nueva iniciativa"
+  [showAction]="true"
+  (actionClick)="openForm()"
+></app-page-header>
+
+<app-search-filter-bar placeholder="Buscar iniciativa..." (searchChange)="onSearch($event)"></app-search-filter-bar>
+
+@if (loading) {
+  <app-loading-spinner></app-loading-spinner>
+} @else if (initiatives.length === 0) {
+  <app-empty-state message="No hay iniciativas registradas."></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="initiatives">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="responsible_manager_id">
+        <th mat-header-cell *matHeaderCellDef>Manager</th>
+        <td mat-cell *matCellDef="let row">{{ getManagerName(row.responsible_manager_id) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="budget_usd">
+        <th mat-header-cell *matHeaderCellDef>Presupuesto USD</th>
+        <td mat-cell *matCellDef="let row">{{ row.budget_usd | usdCurrency }}</td>
+      </ng-container>
+      <ng-container matColumnDef="is_active">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">{{ row.is_active ? 'Activo' : 'Inactivo' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="openForm(row)" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [length]="total"
+    [pageSize]="pageSize"
+    [pageIndex]="page - 1"
+    [pageSizeOptions]="[5, 10, 25]"
+    (page)="onPage($event)"
+  ></mat-paginator>
+}

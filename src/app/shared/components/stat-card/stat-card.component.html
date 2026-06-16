@@ -1,0 +1,29 @@
+@if (link) {
+  <a
+    [class]="'stat-card stat-card--clickable stat-card--' + variant"
+    [routerLink]="link"
+    [queryParams]="queryParams"
+  >
+    <ng-container *ngTemplateOutlet="cardContent"></ng-container>
+  </a>
+} @else {
+  <div [class]="'stat-card stat-card--' + variant">
+    <ng-container *ngTemplateOutlet="cardContent"></ng-container>
+  </div>
+}
+
+<ng-template #cardContent>
+  <div class="stat-card__icon">
+    <mat-icon>{{ icon }}</mat-icon>
+  </div>
+  <div class="stat-card__content">
+    <span class="stat-card__title">{{ title }}</span>
+    <span class="stat-card__value">{{ value }}</span>
+    @if (subtitle) {
+      <span class="stat-card__subtitle">{{ subtitle }}</span>
+    }
+    @if (link) {
+      <span class="stat-card__cta">Ver detalle</span>
+    }
+  </div>
+</ng-template>

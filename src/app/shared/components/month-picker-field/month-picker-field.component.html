@@ -1,0 +1,19 @@
+<mat-form-field appearance="outline" class="month-picker-field">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [value]="displayValue"
+    [disabled]="disabled"
+    readonly
+    placeholder="Seleccionar mes"
+    (blur)="onBlur()"
+    (click)="picker.open()"
+  />
+  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker
+    #picker
+    startView="multi-year"
+    panelClass="month-picker-panel"
+    (monthSelected)="onMonthSelected($event, picker)"
+  ></mat-datepicker>
+</mat-form-field>

@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar recurso' : 'Nuevo recurso externo' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form-grid">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre del consultor</mat-label>
+      <input matInput formControlName="consultant_name" />
+      @if (form.controls.consultant_name.hasError('required') && form.controls.consultant_name.touched) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Perfil técnico</mat-label>
+      <mat-select formControlName="technical_profile">
+        @for (profile of profiles; track profile) {
+          <mat-option [value]="profile">{{ profile }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.technical_profile.hasError('required') && form.controls.technical_profile.touched) {
+        <mat-error>El perfil es obligatorio</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Documento</mat-label>
+      <input matInput formControlName="document_number" />
+    </mat-form-field>
+    @if (isEdit) {
+      <div class="dialog-form-toggle full-width">
+        <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      </div>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="submit()">Guardar</button>
+</mat-dialog-actions>

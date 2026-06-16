@@ -1,0 +1,6 @@
+<div class="loading-spinner" [class.loading-spinner--inline]="inline">
+  <mat-spinner [diameter]="diameter"></mat-spinner>
+  @if (message) {
+    <span>{{ message }}</span>
+  }
+</div>

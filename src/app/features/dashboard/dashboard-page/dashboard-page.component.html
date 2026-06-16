@@ -1,0 +1,177 @@
+<app-page-header
+  title="Resumen de recursos externos"
+  subtitle="Vista general de asignaciones, costos y alertas de vencimiento"
+></app-page-header>
+
+@if (summaryLoading) {
+  <app-loading-spinner message="Cargando indicadores..."></app-loading-spinner>
+} @else if (summary) {
+  <section class="kpi-grid" aria-label="Indicadores principales">
+    <app-stat-card
+      title="Asignaciones activas"
+      [value]="summary.active_assignments"
+      icon="assignment"
+      variant="primary"
+      link="/assignments"
+      [queryParams]="{ status: 'ACTIVE' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="Por vencer"
+      [value]="summary.expiring_soon"
+      icon="schedule"
+      variant="warning"
+      link="/assignments"
+      [queryParams]="{ alert: 'AMBER' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="Vencidos"
+      [value]="summary.expired"
+      icon="warning"
+      variant="danger"
+      link="/assignments"
+      [queryParams]="{ alert: 'RED' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="Costo mensual USD"
+      [value]="summary.total_monthly_cost_usd | usdCurrency"
+      icon="payments"
+      variant="info"
+      link="/assignments"
+    ></app-stat-card>
+    <app-stat-card
+      title="Costo comprometido USD"
+      [value]="summary.total_committed_cost_usd | usdCurrency"
+      icon="account_balance"
+      variant="primary"
+      link="/assignments"
+    ></app-stat-card>
+    <app-stat-card
+      title="OCs pendientes"
+      [value]="summary.purchase_orders.pending"
+      icon="pending_actions"
+      variant="warning"
+      link="/purchase-orders"
+      [queryParams]="{ status: 'PENDING' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="OCs aprobadas"
+      [value]="summary.purchase_orders.approved"
+      icon="check_circle"
+      variant="success"
+      link="/purchase-orders"
+      [queryParams]="{ status: 'APPROVED' }"
+    ></app-stat-card>
+    <app-stat-card
+      title="OCs cerradas"
+      [value]="summary.purchase_orders.closed"
+      icon="lock"
+      variant="neutral"
+      link="/purchase-orders"
+      [queryParams]="{ status: 'CLOSED' }"
+    ></app-stat-card>
+  </section>
+
+  <section class="dashboard-section">
+    <h2>Semáforo de vencimientos</h2>
+    <p class="dashboard-section__hint">Haz clic en un estado para ver las asignaciones filtradas.</p>
+    <div class="traffic-lights">
+      <a
+        class="traffic-light traffic-light--green"
+        routerLink="/assignments"
+        [queryParams]="{ alert: 'GREEN' }"
+      >
+        <span class="traffic-light__count">{{ summary.expiration_alerts.green }}</span>
+        <span class="traffic-light__label">Vigente</span>
+
+      </a>
+      <a
+        class="traffic-light traffic-light--amber"
+        routerLink="/assignments"
+        [queryParams]="{ alert: 'AMBER' }"
+      >
+        <span class="traffic-light__count">{{ summary.expiration_alerts.amber }}</span>
+        <span class="traffic-light__label">Por vencer</span>
+
+      </a>
+      <a
+        class="traffic-light traffic-light--red"
+        routerLink="/assignments"
+        [queryParams]="{ alert: 'RED' }"
+      >
+        <span class="traffic-light__count">{{ summary.expiration_alerts.red }}</span>
+        <span class="traffic-light__label">Crítico / vencido</span>
+
+      </a>
+    </div>
+  </section>
+
+  <section class="dashboard-section" id="expiring-resources-section">
+    <div class="dashboard-section__header">
+      <h2>Recursos próximos a vencer</h2>
+      <a routerLink="/assignments" [queryParams]="{ alert: 'AMBER' }" class="dashboard-link">
+        Ver todas las asignaciones
+      </a>
+    </div>
+
+    @if (expiringLoading) {
+      <app-loading-spinner message="Cargando recursos..."></app-loading-spinner>
+    } @else if (expiringResources.length === 0) {
+      <app-empty-state title="Sin alertas" message="No hay recursos próximos a vencer."></app-empty-state>
+    } @else {
+      <div class="table-container">
+        <table mat-table [dataSource]="expiringResources">
+          <ng-container matColumnDef="consultant_name">
+            <th mat-header-cell *matHeaderCellDef>Consultor</th>
+            <td mat-cell *matCellDef="let row">{{ row.consultant_name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="technical_profile">
+            <th mat-header-cell *matHeaderCellDef>Perfil</th>
+            <td mat-cell *matCellDef="let row">{{ row.technical_profile }}</td>
+          </ng-container>
+          <ng-container matColumnDef="provider_name">
+            <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+            <td mat-cell *matCellDef="let row">{{ row.provider_name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="main_initiative_name">
+            <th mat-header-cell *matHeaderCellDef>Iniciativa</th>
+            <td mat-cell *matCellDef="let row">{{ row.main_initiative_name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="end_date">
+            <th mat-header-cell *matHeaderCellDef>Fin</th>
+            <td mat-cell *matCellDef="let row">{{ formatDate(row.end_date) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="expiration_alert">
+            <th mat-header-cell *matHeaderCellDef>Alerta</th>
+            <td mat-cell *matCellDef="let row">
+              <app-expiration-badge [alert]="row.expiration_alert" [daysToEnd]="row.days_to_end"></app-expiration-badge>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    }
+  </section>
+
+  <section class="dashboard-section dashboard-section--grid">
+    <div class="summary-card">
+      <h2>Resumen de OCs por estado</h2>
+      <ul>
+        <li><span>Total</span><strong>{{ summary.purchase_orders.total }}</strong></li>
+        <li><span>Pendientes</span><strong>{{ summary.purchase_orders.pending }}</strong></li>
+        <li><span>Coupa generado</span><strong>{{ summary.purchase_orders.coupa_generated }}</strong></li>
+        <li><span>Enviadas</span><strong>{{ summary.purchase_orders.sent }}</strong></li>
+        <li><span>Aprobadas</span><strong>{{ summary.purchase_orders.approved }}</strong></li>
+        <li><span>Cerradas</span><strong>{{ summary.purchase_orders.closed }}</strong></li>
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h2>Resumen financiero</h2>
+      <ul>
+        <li><span>Costo mensual total</span><strong>{{ summary.total_monthly_cost_usd | usdCurrency }}</strong></li>
+        <li><span>Costo comprometido total</span><strong>{{ summary.total_committed_cost_usd | usdCurrency }}</strong></li>
+      </ul>
+      <a routerLink="/assignments" class="dashboard-link">Ver asignaciones</a>
+    </div>
+  </section>
+}

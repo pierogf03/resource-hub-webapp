@@ -1,0 +1,64 @@
+<aside class="sidebar" [class.sidebar--collapsed]="isCollapsed" [class.sidebar--mobile]="mobile">
+  <div class="sidebar__header">
+    <a class="sidebar__logo" routerLink="/dashboard" aria-label="ResourcePulse" (click)="onNavClick()">
+      <mat-icon>monitoring</mat-icon>
+    </a>
+    @if (!isCollapsed) {
+      <div class="sidebar__brand">
+        <span class="sidebar__brand-name">ResourcePulse</span>
+        <span class="sidebar__brand-tagline">Gestión de recursos</span>
+      </div>
+    }
+  </div>
+
+  <nav class="sidebar__nav" aria-label="Navegación principal">
+    @for (group of visibleGroups; track group.title) {
+      <div class="sidebar__group">
+        @if (!isCollapsed) {
+          <span class="sidebar__group-title">{{ group.title }}</span>
+        }
+        <ul class="sidebar__group-list">
+          @for (item of group.items; track item.route) {
+            <li>
+              <a
+                class="sidebar__nav-item"
+                [routerLink]="item.route"
+                routerLinkActive="sidebar__nav-item--active"
+                [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+                [matTooltip]="item.label"
+                matTooltipPosition="right"
+                [matTooltipDisabled]="!isCollapsed"
+                (click)="onNavClick()"
+              >
+                <span class="sidebar__nav-icon">
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                </span>
+                @if (!isCollapsed) {
+                  <span class="sidebar__nav-label">{{ item.label }}</span>
+                  <mat-icon class="sidebar__nav-more">more_horiz</mat-icon>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+
+  @if (!mobile) {
+    <button
+      class="sidebar__toggle"
+      type="button"
+      [attr.aria-label]="expanded ? 'Contraer menú' : 'Expandir menú'"
+      [matTooltip]="expanded ? 'Contraer' : 'Expandir'"
+      matTooltipPosition="right"
+      [matTooltipDisabled]="!isCollapsed"
+      (click)="onToggle()"
+    >
+      <mat-icon>{{ expanded ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+      @if (!isCollapsed) {
+        <span>Contraer</span>
+      }
+    </button>
+  }
+</aside>

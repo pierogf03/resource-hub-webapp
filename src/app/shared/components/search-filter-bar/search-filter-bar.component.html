@@ -1,0 +1,8 @@
+<div class="search-filter-bar">
+  <mat-form-field appearance="outline" class="search-filter-bar__field">
+    <mat-label>{{ placeholder }}</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="searchControl" />
+  </mat-form-field>
+  <ng-content></ng-content>
+</div>
