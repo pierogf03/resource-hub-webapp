@@ -1,19 +1,19 @@
 <h2 mat-dialog-title>{{ isEdit ? 'Editar iniciativa' : 'Nueva iniciativa' }}</h2>
 <mat-dialog-content>
-  <form [formGroup]="form" class="form-grid">
-    <mat-form-field appearance="outline">
+  <form [formGroup]="form" class="dialog-form-grid">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" />
       @if (form.controls.name.hasError('required') && form.controls.name.touched) {
         <mat-error>El nombre es obligatorio</mat-error>
       }
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Descripción</mat-label>
       <textarea matInput formControlName="description" rows="3"></textarea>
     </mat-form-field>
     @if (showManagerField) {
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Manager responsable</mat-label>
         <mat-select formControlName="responsible_manager_id">
           <mat-option value="">Sin asignar</mat-option>
@@ -31,7 +31,9 @@
       }
     </mat-form-field>
     @if (isEdit) {
-      <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      <div class="dialog-form-toggle">
+        <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      </div>
     }
   </form>
 </mat-dialog-content>

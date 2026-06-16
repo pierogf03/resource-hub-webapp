@@ -13,6 +13,17 @@
   <div class="header__spacer"></div>
 
   @if (user) {
+    <div class="header__exchange-rate" [class.header__exchange-rate--loading]="exchangeRateLoading()">
+      <mat-icon>currency_exchange</mat-icon>
+      @if (exchangeRateLoading()) {
+        <span class="header__exchange-rate-text">TC hoy…</span>
+      } @else if (exchangeRateError()) {
+        <span class="header__exchange-rate-text">TC no disponible</span>
+      } @else if (exchangeRateLabel) {
+        <span class="header__exchange-rate-text">TC hoy: 1 USD = S/ {{ exchangeRateLabel }}</span>
+      }
+    </div>
+
     <div class="header__actions">
       <div class="header__user-chip">
         <div class="header__avatar">{{ initials }}</div>

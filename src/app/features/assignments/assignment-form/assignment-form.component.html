@@ -92,6 +92,11 @@
               <mat-error>Tipo de cambio obligatorio y mayor a 0</mat-error>
             }
           </mat-form-field>
+          @if (monthlyCostUsd !== null) {
+            <div class="form-hint form-hint--usd">
+              Equivalente en USD: <strong>{{ monthlyCostUsd | usdCurrency }}</strong>
+            </div>
+          }
         }
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Comentarios</mat-label>

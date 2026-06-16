@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{ isEdit ? 'Editar recurso' : 'Nuevo recurso externo' }}</h2>
 <mat-dialog-content>
-  <form [formGroup]="form" class="form-grid">
-    <mat-form-field appearance="outline">
+  <form [formGroup]="form" class="dialog-form-grid">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre del consultor</mat-label>
       <input matInput formControlName="consultant_name" />
       @if (form.controls.consultant_name.hasError('required') && form.controls.consultant_name.touched) {
@@ -24,7 +24,9 @@
       <input matInput formControlName="document_number" />
     </mat-form-field>
     @if (isEdit) {
-      <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      <div class="dialog-form-toggle full-width">
+        <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      </div>
     }
   </form>
 </mat-dialog-content>

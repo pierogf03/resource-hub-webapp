@@ -13,7 +13,10 @@ import { PurchaseOrder } from '../../../core/models/purchase-order.model';
 import { AssignmentService } from '../../../core/services/assignment.service';
 import { PurchaseOrderService } from '../../../core/services/purchase-order.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ExchangeRateService } from '../../../core/services/exchange-rate.service';
 import { exchangeRateRequiredWhenPen } from '../../../shared/utils/form-validators.util';
+import { convertToUsd } from '../../../shared/utils/money-format.util';
+import { UsdCurrencyPipe } from '../../../shared/pipes/usd-currency.pipe';
 
 export interface PurchaseOrderFormData {
   purchaseOrder?: PurchaseOrder;
@@ -31,6 +34,7 @@ export interface PurchaseOrderFormData {
     MatButtonModule,
     MatIconModule,
     MonthPickerFieldComponent,
+    UsdCurrencyPipe,
   ],
   templateUrl: './purchase-order-form.component.html',
   styleUrl: './purchase-order-form.component.scss',
@@ -39,6 +43,7 @@ export class PurchaseOrderFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly purchaseOrderService = inject(PurchaseOrderService);
   private readonly assignmentService = inject(AssignmentService);
+  private readonly exchangeRateService = inject(ExchangeRateService);
   private readonly notification = inject(NotificationService);
   private readonly dialogRef = inject(MatDialogRef<PurchaseOrderFormComponent>);
   readonly data = inject<PurchaseOrderFormData>(MAT_DIALOG_DATA);
@@ -66,6 +71,13 @@ export class PurchaseOrderFormComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    this.exchangeRateService.loadUsdPenRate();
+    this.form.controls.currency.valueChanges.subscribe((currency) => {
+      if (currency === 'PEN') {
+        this.applyCurrentExchangeRate();
+      }
+    });
+
     this.assignmentService.getAssignments({ page_size: 100 }).subscribe((res) => {
       this.assignments = res.data.items;
     });
@@ -84,6 +96,34 @@ export class PurchaseOrderFormComponent implements OnInit {
       });
       this.form.controls.assignment_id.disable();
     }
+  }
+
+  get amountUsd(): number | null {
+    const value = this.form.getRawValue();
+    return convertToUsd(value.amount, value.currency, value.exchange_rate);
+  }
+
+  private applyCurrentExchangeRate(): void {
+    const currentRate = this.form.controls.exchange_rate.value;
+    if (currentRate && currentRate > 0) {
+      return;
+    }
+
+    const cachedRate = this.exchangeRateService.getRateValue();
+    if (cachedRate) {
+      this.form.patchValue({ exchange_rate: cachedRate });
+      return;
+    }
+
+    this.exchangeRateService.getUsdPenRate().subscribe((response) => {
+      if (!response.success) {
+        return;
+      }
+      const rate = this.exchangeRateService.getRateValue();
+      if (rate && !this.form.controls.exchange_rate.value) {
+        this.form.patchValue({ exchange_rate: rate });
+      }
+    });
   }
 
   submit(): void {

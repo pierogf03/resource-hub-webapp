@@ -1,7 +1,22 @@
 import { AssignmentStatus, ExpirationAlert } from '../constants/status.constants';
 
+export interface AssignmentInitiativeItem {
+  initiative_id: string;
+  initiative_name?: string;
+  allocation_percentage: number;
+  is_primary: boolean;
+  is_funding_source: boolean;
+}
+
 export interface Assignment {
   id: string;
+  resource_id?: string;
+  provider_id?: string;
+  main_initiative_id?: string;
+  manager_id?: string;
+  analyst_responsible_id?: string | null;
+  comments?: string | null;
+  initiatives?: AssignmentInitiativeItem[];
   consultant_name: string;
   technical_profile: string;
   provider_name: string;

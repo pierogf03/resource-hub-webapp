@@ -102,7 +102,7 @@ export class InitiativeListComponent implements OnInit {
 
   openForm(initiative?: Initiative): void {
     const ref = this.dialog.open(InitiativeFormComponent, {
-      width: '520px',
+      width: '680px',
       maxWidth: '95vw',
       panelClass: 'app-dialog-panel',
       autoFocus: false,

@@ -74,7 +74,7 @@ export class ExternalResourceListComponent implements OnInit {
 
   openForm(resource?: ExternalResource): void {
     const ref = this.dialog.open(ExternalResourceFormComponent, {
-      width: '520px',
+      width: '680px',
       maxWidth: '95vw',
       panelClass: 'app-dialog-panel',
       autoFocus: false,

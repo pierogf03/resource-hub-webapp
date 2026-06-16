@@ -8,11 +8,13 @@ import { ApiResponse } from '../models/api-response.model';
 import { AuthUser, LoginRequest, LoginResponse } from '../models/auth.model';
 import { StorageService } from './storage.service';
 import { clearChatSessionStorage } from '../utils/chat-session.util';
+import { ExchangeRateService } from './exchange-rate.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(StorageService);
+  private readonly exchangeRateService = inject(ExchangeRateService);
 
   login(credentials: LoginRequest): Observable<ApiResponse<LoginResponse>> {
     return this.http
@@ -25,6 +27,7 @@ export class AuthService {
           if (response.success && response.data) {
             this.storage.setToken(response.data.access_token);
             this.storage.setUser(response.data.user);
+            this.exchangeRateService.getUsdPenRate().subscribe();
           }
         })
       );
@@ -38,6 +41,7 @@ export class AuthService {
 
   logout(): void {
     clearChatSessionStorage();
+    this.exchangeRateService.clearCache();
     this.storage.clearSession();
   }
 

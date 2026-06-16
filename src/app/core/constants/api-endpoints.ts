@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
   },
   assignments: {
     list: '/assignments',
+    detail: (id: string) => `/assignments/${id}`,
     create: '/assignments',
     update: (id: string) => `/assignments/${id}`,
     generateMonthlyPurchaseOrders: (id: string) =>
@@ -48,5 +49,8 @@ export const API_ENDPOINTS = {
   aiChat: {
     sendMessage: '/ai/chat/messages',
     confirmAction: '/ai/chat/actions/confirm',
+  },
+  exchangeRates: {
+    usdPen: '/exchange-rates/usd-pen',
   },
 } as const;

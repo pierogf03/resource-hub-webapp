@@ -141,9 +141,9 @@ export class PurchaseOrderListComponent implements OnInit {
 
   openForm(po?: PurchaseOrder): void {
     const ref = this.dialog.open(PurchaseOrderFormComponent, {
-      width: '640px',
+      width: '760px',
       maxWidth: '95vw',
-      panelClass: 'app-dialog-panel',
+      panelClass: ['app-dialog-panel', 'app-dialog-panel--wide'],
       autoFocus: false,
       data: { purchaseOrder: po },
     });

@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{ isEdit ? 'Editar proveedor' : 'Nuevo proveedor' }}</h2>
 <mat-dialog-content>
-  <form [formGroup]="form" class="form-grid">
-    <mat-form-field appearance="outline">
+  <form [formGroup]="form" class="dialog-form-grid">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" placeholder="Ej. Proveedor Demo SAP" />
       @if (form.controls.name.hasError('required') && form.controls.name.touched) {
@@ -19,7 +19,7 @@
       <mat-label>Contacto</mat-label>
       <input matInput formControlName="contact_name" />
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Email contacto</mat-label>
       <input matInput type="email" formControlName="contact_email" />
       @if (form.controls.contact_email.hasError('email') && form.controls.contact_email.touched) {
@@ -27,7 +27,9 @@
       }
     </mat-form-field>
     @if (isEdit) {
-      <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      <div class="dialog-form-toggle full-width">
+        <mat-slide-toggle formControlName="is_active">Activo</mat-slide-toggle>
+      </div>
     }
   </form>
 </mat-dialog-content>

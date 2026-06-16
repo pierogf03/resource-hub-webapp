@@ -60,6 +60,11 @@
                 <mat-error>Tipo de cambio obligatorio</mat-error>
               }
             </mat-form-field>
+            @if (amountUsd !== null) {
+              <div class="po-dialog__usd-hint">
+                Equivalente en USD: <strong>{{ amountUsd | usdCurrency }}</strong>
+              </div>
+            }
           }
         </div>
       </section>

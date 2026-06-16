@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { API_ENDPOINTS } from '../constants/api-endpoints';
 import { ApiResponse, ListQueryParams, PaginatedResponse } from '../models/api-response.model';
@@ -22,6 +22,28 @@ export class AssignmentService {
       `${environment.apiUrl}${API_ENDPOINTS.assignments.list}`,
       { params: new HttpParams({ fromObject: buildQueryParams(params) }) }
     );
+  }
+
+  getAssignment(id: string): Observable<ApiResponse<Assignment>> {
+    return this.http
+      .get<ApiResponse<Assignment>>(`${environment.apiUrl}${API_ENDPOINTS.assignments.detail(id)}`)
+      .pipe(
+        catchError(() =>
+          this.getAssignments({ page_size: 500 }).pipe(
+            switchMap((response) => {
+              const assignment = response.data.items.find((item) => item.id === id);
+              if (!assignment) {
+                return throwError(() => new Error('Assignment not found'));
+              }
+              return of({
+                success: true,
+                message: response.message,
+                data: assignment,
+              });
+            })
+          )
+        )
+      );
   }
 
   createAssignment(request: CreateAssignmentRequest): Observable<ApiResponse<Assignment>> {

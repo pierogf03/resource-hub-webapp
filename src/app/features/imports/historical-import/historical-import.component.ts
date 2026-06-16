@@ -13,6 +13,7 @@ import { ImportService } from '../../../core/services/import.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ExchangeRateService } from '../../../core/services/exchange-rate.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { FileUploadBoxComponent } from '../../../shared/components/file-upload-box/file-upload-box.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -48,6 +49,7 @@ export class HistoricalImportComponent implements OnInit {
   private readonly importService = inject(ImportService);
   private readonly userService = inject(UserService);
   private readonly authService = inject(AuthService);
+  private readonly exchangeRateService = inject(ExchangeRateService);
   private readonly notification = inject(NotificationService);
 
   loading = false;
@@ -65,6 +67,17 @@ export class HistoricalImportComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.exchangeRateService.loadUsdPenRate();
+    this.exchangeRateService.getUsdPenRate().subscribe((response) => {
+      if (!response.success || this.form.controls.default_exchange_rate.value) {
+        return;
+      }
+      const rate = this.exchangeRateService.getRateValue();
+      if (rate) {
+        this.form.patchValue({ default_exchange_rate: rate });
+      }
+    });
+
     if (this.isAdmin) {
       this.userService.getManagersForSelect().subscribe((managers) => {
         this.managers = managers;

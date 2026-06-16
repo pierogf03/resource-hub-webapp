@@ -117,6 +117,44 @@ body {
 
 
 
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  width: 100%;
+
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+}
+
+.dialog-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1.25rem;
+  width: 100%;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.dialog-form-toggle {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0.25rem 0;
+}
+
 .form-page-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -370,38 +408,57 @@ body {
   }
 }
 
-.app-dialog-panel .mat-mdc-dialog-surface {
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
-  background: #fff;
-  border: 1px solid var(--shell-card-border);
-}
-
-.app-dialog-panel .mat-mdc-dialog-container .mat-mdc-dialog-content {
-  padding: 0 1.5rem 0.5rem;
-  max-height: 70vh;
-  color: var(--shell-text);
-}
-
-.app-dialog-panel .mat-mdc-dialog-title,
-.app-dialog-panel h2[mat-dialog-title] {
-  margin: 0;
-  padding: 1.25rem 1.5rem 0.5rem;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--shell-text);
-  letter-spacing: -0.01em;
-
-  &::before {
-    display: none;
+.app-dialog-panel {
+  .mat-mdc-dialog-container {
+    --mat-dialog-container-min-width: 680px;
+    max-width: 95vw;
   }
-}
 
-.app-dialog-panel .mat-mdc-dialog-actions {
-  padding: 0.75rem 1.5rem 1.25rem;
-  border-top: 1px solid var(--shell-card-border);
-  gap: 0.5rem;
+  .mat-mdc-dialog-surface {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
+    background: #fff;
+    border: 1px solid var(--shell-card-border);
+    min-width: min(680px, 95vw);
+  }
+
+  .mat-mdc-dialog-container .mat-mdc-dialog-content {
+    padding: 0.5rem 1.75rem 1rem;
+    max-height: 75vh;
+    color: var(--shell-text);
+    overflow-x: hidden;
+  }
+
+  .mat-mdc-dialog-title,
+  h2[mat-dialog-title] {
+    margin: 0;
+    padding: 1.5rem 1.75rem 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--shell-text);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .mat-mdc-dialog-actions {
+    padding: 1rem 1.75rem 1.5rem;
+    border-top: 1px solid var(--shell-card-border);
+    gap: 0.75rem;
+    min-height: auto;
+  }
+
+  &--wide .mat-mdc-dialog-container {
+    --mat-dialog-container-min-width: 760px;
+  }
+
+  &--wide .mat-mdc-dialog-surface {
+    min-width: min(760px, 95vw);
+  }
 }
 
 .month-picker-panel .mat-calendar-period-button {
