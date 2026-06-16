@@ -1,5 +1,7 @@
 .main-layout {
-  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
   background: var(--shell-bg, #f0f1f6);
 
   &__drawer {
@@ -22,9 +24,11 @@
     position: fixed;
     top: 0;
     left: 0;
-    bottom: 0;
+    height: 100dvh;
+    max-height: 100dvh;
     width: var(--sidebar-width, 260px);
     z-index: 100;
+    overflow: hidden;
     transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
     @media (min-width: 1024px) {

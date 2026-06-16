@@ -8,33 +8,43 @@
     >
       <mat-icon>menu</mat-icon>
     </button>
+
+    @if (user) {
+      <p
+        class="header__welcome"
+        [class.header__welcome--fade]="!welcomeVisible()"
+        aria-live="polite"
+      >
+        {{ welcomeMessage }}
+      </p>
+    }
   </div>
 
-  <div class="header__spacer"></div>
-
   @if (user) {
-    <div class="header__exchange-rate" [class.header__exchange-rate--loading]="exchangeRateLoading()">
-      <mat-icon>currency_exchange</mat-icon>
-      @if (exchangeRateLoading()) {
-        <span class="header__exchange-rate-text">TC hoy…</span>
-      } @else if (exchangeRateError()) {
-        <span class="header__exchange-rate-text">TC no disponible</span>
-      } @else if (exchangeRateLabel) {
-        <span class="header__exchange-rate-text">TC hoy: 1 USD = S/ {{ exchangeRateLabel }}</span>
-      }
-    </div>
-
-    <div class="header__actions">
-      <div class="header__user-chip">
-        <div class="header__avatar">{{ initials }}</div>
-        <div class="header__user-info">
-          <span class="header__name">{{ user.full_name }}</span>
-          <span class="header__role">{{ roleLabel }}</span>
-        </div>
+    <div class="header__right">
+      <div class="header__exchange-rate" [class.header__exchange-rate--loading]="exchangeRateLoading()">
+        <mat-icon>currency_exchange</mat-icon>
+        @if (exchangeRateLoading()) {
+          <span class="header__exchange-rate-text">TC hoy…</span>
+        } @else if (exchangeRateError()) {
+          <span class="header__exchange-rate-text">TC no disponible</span>
+        } @else if (exchangeRateLabel) {
+          <span class="header__exchange-rate-text">TC hoy: 1 USD = S/ {{ exchangeRateLabel }}</span>
+        }
       </div>
-      <button class="header__icon-btn header__logout" type="button" (click)="logout()" aria-label="Cerrar sesión">
-        <mat-icon>logout</mat-icon>
-      </button>
+
+      <div class="header__actions">
+        <div class="header__user-chip">
+          <div class="header__avatar">{{ initials }}</div>
+          <div class="header__user-info">
+            <span class="header__name">{{ user.full_name }}</span>
+            <span class="header__role">{{ roleLabel }}</span>
+          </div>
+        </div>
+        <button class="header__icon-btn header__logout" type="button" (click)="logout()" aria-label="Cerrar sesión">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
     </div>
   }
 </header>
