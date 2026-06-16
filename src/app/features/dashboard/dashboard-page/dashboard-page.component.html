@@ -17,19 +17,21 @@
     ></app-stat-card>
     <app-stat-card
       title="Por vencer"
+      subtitle="≤30 días restantes"
       [value]="summary.expiring_soon"
       icon="schedule"
       variant="warning"
       link="/assignments"
-      [queryParams]="{ alert: 'AMBER' }"
+      [queryParams]="{ status: 'ACTIVE' }"
     ></app-stat-card>
     <app-stat-card
       title="Vencidos"
+      subtitle="Fecha de fin superada"
       [value]="summary.expired"
       icon="warning"
       variant="danger"
       link="/assignments"
-      [queryParams]="{ alert: 'RED' }"
+      [queryParams]="{ status: 'ACTIVE' }"
     ></app-stat-card>
     <app-stat-card
       title="Costo mensual USD"
@@ -73,7 +75,10 @@
 
   <section class="dashboard-section">
     <h2>Semáforo de vencimientos</h2>
-    <p class="dashboard-section__hint">Haz clic en un estado para ver las asignaciones filtradas.</p>
+    <p class="dashboard-section__hint">
+      Vigente: más de 30 días · Por vencer: 15 a 30 días · Crítico / vencido: menos de 15 días.
+      Haz clic en un estado para ver las asignaciones filtradas.
+    </p>
     <div class="traffic-lights">
       <a
         class="traffic-light traffic-light--green"
@@ -108,7 +113,7 @@
   <section class="dashboard-section" id="expiring-resources-section">
     <div class="dashboard-section__header">
       <h2>Recursos próximos a vencer</h2>
-      <a routerLink="/assignments" [queryParams]="{ alert: 'AMBER' }" class="dashboard-link">
+      <a routerLink="/assignments" [queryParams]="{ status: 'ACTIVE' }" class="dashboard-link">
         Ver todas las asignaciones
       </a>
     </div>

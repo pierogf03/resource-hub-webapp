@@ -30,8 +30,9 @@ export interface ListQueryParams {
   status?: string;
   provider_id?: string;
   initiative_id?: string;
-  expiration_alert?: string;
+  alert?: string;
   manager_id?: string;
+  responsible_manager_id?: string;
   assignment_id?: string;
   period_from?: string;
   period_to?: string;
