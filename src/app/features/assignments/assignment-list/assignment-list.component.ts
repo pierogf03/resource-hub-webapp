@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ExpirationAlert } from '../../../core/constants/status.constants';
 import { Assignment } from '../../../core/models/assignment.model';
 import { Initiative } from '../../../core/models/initiative.model';
@@ -62,6 +62,7 @@ export class AssignmentListComponent implements OnInit {
 
   loading = true;
   assignments: Assignment[] = [];
+  dataSource = new MatTableDataSource<Assignment>([]);
   providers: Provider[] = [];
   initiatives: Initiative[] = [];
   managers: User[] = [];
@@ -105,8 +106,12 @@ export class AssignmentListComponent implements OnInit {
       this.alertFilter.setValue(alert as ExpirationAlert);
     }
 
-    this.providerService.getProviders({ page_size: 100 }).subscribe((r) => (this.providers = r.data.items));
-    this.initiativeService.getInitiatives({ page_size: 100 }).subscribe((r) => (this.initiatives = r.data.items));
+    this.providerService.getProviders({ page_size: 100 }).subscribe((r) => {
+      this.providers = Array.isArray(r.data?.items) ? r.data.items : [];
+    });
+    this.initiativeService.getInitiatives({ page_size: 100 }).subscribe((r) => {
+      this.initiatives = Array.isArray(r.data?.items) ? r.data.items : [];
+    });
     if (this.isAdmin) {
       this.userService.getManagersForSelect().subscribe((managers) => {
         this.managers = managers;
@@ -125,16 +130,21 @@ export class AssignmentListComponent implements OnInit {
         status: this.statusFilter.value || undefined,
         provider_id: this.providerFilter.value || undefined,
         initiative_id: this.initiativeFilter.value || undefined,
-        expiration_alert: this.alertFilter.value || undefined,
+        alert: this.alertFilter.value || undefined,
         manager_id: this.managerFilter.value || undefined,
       })
       .subscribe({
         next: (response) => {
-          this.assignments = response.data.items;
-          this.total = response.data.total;
+          const items = Array.isArray(response.data?.items) ? response.data.items : [];
+          this.assignments = items;
+          this.dataSource.data = items;
+          this.total = response.data?.total ?? 0;
           this.loading = false;
         },
         error: () => {
+          this.assignments = [];
+          this.dataSource.data = [];
+          this.total = 0;
           this.loading = false;
         },
       });

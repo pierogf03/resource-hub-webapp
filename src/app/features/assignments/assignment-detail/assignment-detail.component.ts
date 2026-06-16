@@ -59,17 +59,15 @@ export class AssignmentDetailComponent implements OnInit {
   }
 
   private loadAssignment(id: string): void {
-    this.assignmentService.getAssignments({ page_size: 100 }).subscribe({
+    this.assignmentService.getAssignment(id).subscribe({
       next: (response) => {
-        this.assignment = response.data.items.find((a) => a.id === id) ?? null;
+        this.assignment = response.data;
         this.loading = false;
-        if (!this.assignment) {
-          this.notification.error('Asignación no encontrada');
-          this.router.navigate(['/assignments']);
-        }
       },
       error: () => {
         this.loading = false;
+        this.notification.error('Asignación no encontrada');
+        this.router.navigate(['/assignments']);
       },
     });
   }

@@ -38,9 +38,9 @@
     <mat-label>Alerta</mat-label>
     <mat-select [formControl]="alertFilter" (selectionChange)="onFilterChange()">
       <mat-option value="">Todas</mat-option>
-      <mat-option value="GREEN">Vigente</mat-option>
-      <mat-option value="AMBER">Por vencer</mat-option>
-      <mat-option value="RED">Crítico</mat-option>
+      <mat-option value="GREEN">Vigente (&gt;30 días)</mat-option>
+      <mat-option value="AMBER">Por vencer (15-30 días)</mat-option>
+      <mat-option value="RED">Crítico / vencido (&lt;15 días)</mat-option>
     </mat-select>
   </mat-form-field>
   @if (isAdmin) {
@@ -62,7 +62,7 @@
   <app-empty-state message="No hay asignaciones registradas."></app-empty-state>
 } @else {
   <div class="table-container">
-    <table mat-table [dataSource]="assignments">
+    <table mat-table [dataSource]="dataSource">
       <ng-container matColumnDef="consultant_name">
         <th mat-header-cell *matHeaderCellDef>Consultor</th>
         <td mat-cell *matCellDef="let row">{{ row.consultant_name }}</td>
